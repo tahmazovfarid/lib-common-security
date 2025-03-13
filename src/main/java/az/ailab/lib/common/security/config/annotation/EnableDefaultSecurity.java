@@ -9,6 +9,20 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import org.springframework.context.annotation.Import;
 
+/**
+ * Enables default security configuration for microservices.
+ * <p>To override the default configuration, define your own bean:</p>
+ * <pre>
+ * {@code
+ * @Bean
+ * public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+ *     return http
+ *         // Your custom configuration
+ *         .build();
+ * }
+ * }
+ * </pre>
+ */
 @Target(TYPE)
 @Retention(RUNTIME)
 @Documented

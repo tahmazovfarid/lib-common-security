@@ -3,9 +3,11 @@ package az.ailab.lib.common.security.config;
 import az.ailab.lib.common.security.filter.JwtTokenFilter;
 import az.ailab.lib.common.security.provider.UserTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -20,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 @ConditionalOnClass({SecurityFilterChain.class})
+@AutoConfigureAfter(SecurityAutoConfiguration.class)
 @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
 public class DefaultSecurityAutoConfiguration {
 
@@ -32,8 +35,8 @@ public class DefaultSecurityAutoConfiguration {
 
     private final UserTokenProvider userTokenProvider;
 
-    @Bean
-    @ConditionalOnMissingBean(SecurityFilterChain.class)
+    @Bean(name = "defaultSecurityFilterChain")
+    @ConditionalOnMissingBean(name = "securityFilterChain")
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
