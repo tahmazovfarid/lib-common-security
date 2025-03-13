@@ -11,7 +11,7 @@ group = 'az.ailab'
 version = properties.projectVersion
 compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
-sourceCompatibility = properties.javaVersion
+sourceCompatibility = javaVersion
 
 configurations {
     compileOnly {
