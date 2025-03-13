@@ -3,10 +3,12 @@ package az.ailab.lib.common.security.config;
 import az.ailab.lib.common.security.filter.JwtTokenFilter;
 import az.ailab.lib.common.security.provider.UserTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -18,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 @ConditionalOnClass({SecurityFilterChain.class})
+@AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
 public class DefaultSecurityAutoConfiguration {
 
     private static final String CONTENT_SECURITY_POLICY = "script-src 'self'";
@@ -34,7 +37,7 @@ public class DefaultSecurityAutoConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-
+                .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
