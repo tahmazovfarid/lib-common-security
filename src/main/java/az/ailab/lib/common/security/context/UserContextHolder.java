@@ -127,6 +127,15 @@ public final class UserContextHolder {
     }
 
     /**
+     * Check if a user is authenticated.
+     *
+     * @return true if authenticated, false otherwise
+     */
+    public static boolean isOrgProvider() {
+        return getCurrentUser().map(UserPrincipal::isOrgProvider).orElse(false);
+    }
+
+    /**
      * Get current user's organization information.
      *
      * @return UserOrganization or null if no authenticated user
