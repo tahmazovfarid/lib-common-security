@@ -1,6 +1,8 @@
 package az.ailab.lib.common.security.model;
 
+import az.ailab.lib.common.security.model.enums.ActivityType;
 import java.util.List;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -26,6 +28,13 @@ public class UserPrincipal {
     private UserOrganization organization;
 
     private TokenPayload payload;
+
+    public boolean isOrgProvider() {
+        return Optional.ofNullable(organization)
+                .map(UserOrganization::getActivityType)
+                .filter(type -> type == ActivityType.PROVIDER || type == ActivityType.BOTH)
+                .isPresent();
+    }
 
     public static UserPrincipal of(TokenPayload payload, List<GrantedAuthority> authorities) {
         return new UserPrincipal(
@@ -55,7 +64,7 @@ public class UserPrincipal {
         return new UserOrganization(
                 payload.getOrganizationId(),
                 payload.getOrganizationName(),
-                payload.getOrganizationPrivilege(),
+                payload.getOrganizationActivityType(),
                 payload.getDirectOrganizationId(),
                 payload.getOrganizationPath(),
                 payload.getOrganizationHierarchy()

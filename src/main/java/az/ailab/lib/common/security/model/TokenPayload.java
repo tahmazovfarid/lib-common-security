@@ -30,7 +30,7 @@ public class TokenPayload {
 
     private long organizationId;
     private String organizationName;
-    private String organizationPrivilege;
+    private String organizationActivityType;
     private long directOrganizationId;
     private List<String> organizationPath = new ArrayList<>();
     private List<OrganizationLevel> organizationHierarchy = new ArrayList<>();
@@ -73,7 +73,7 @@ public class TokenPayload {
     private static void extractOrganizationInfo(JsonNode orgNode, TokenPayload payload) {
         payload.organizationId = orgNode.path("id").asLong();
         payload.organizationName = orgNode.path("name").asText();
-        payload.organizationPrivilege = orgNode.path("privilege").asText();
+        payload.organizationActivityType = orgNode.path("activityType").asText();
         payload.directOrganizationId = orgNode.path("directOrganizationId").asLong();
         payload.organizationPath = extractArrayAsStringList(orgNode.path("path"));
         payload.organizationHierarchy = extractOrganizationHierarchy(orgNode.path("hierarchy"));
@@ -108,7 +108,7 @@ public class TokenPayload {
                 .map(node -> new OrganizationLevel(
                         node.path("id").asLong(),
                         node.path("name").asText(),
-                        node.path("privilege").asText(),
+                        node.path("activityType").asText(),
                         node.path("level").asInt(),
                         node.path("parentId").asLong()
                 )).collect(Collectors.toList());
