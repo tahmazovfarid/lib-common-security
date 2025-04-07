@@ -4,6 +4,7 @@ import az.ailab.lib.common.security.model.UserPrincipal;
 import az.ailab.lib.common.security.model.enums.ActivityType;
 import az.ailab.lib.common.security.model.enums.Permission;
 import az.ailab.lib.common.security.model.enums.PermissionLevel;
+import az.ailab.lib.common.security.model.enums.RankType;
 import az.ailab.lib.common.security.model.enums.RoleType;
 import az.ailab.lib.common.security.model.vo.DirectorateInfo;
 import az.ailab.lib.common.security.model.vo.InstitutionInfo;
@@ -253,9 +254,9 @@ public final class UserContextHolder {
      *
      * @return the Rank type of the current authenticated user's institution, or {@code null} if not authenticated
      */
-    public static String getInstitutionRankType() {
+    public static RankType getInstitutionRankType() {
         return Optional.ofNullable(getInstitution())
-                .map(InstitutionInfo::rankType)
+                .map(InstitutionInfo::getRankType)
                 .orElse(null);
     }
 
