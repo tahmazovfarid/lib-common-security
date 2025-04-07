@@ -30,6 +30,7 @@ public class TestConstant {
     public static final long USER_INSTITUTION_ID = 1;
     public static final String USER_INSTITUTION_NAME = "FBI";
     public static final String INSTITUTION_ACTIVITY_TYPE = ActivityType.BOTH.name();
+    public static final String RANK_TYPE = "military";
     public static final long USER_DIRECT_STRUCTURE_ID = 4;
     public static final String USER_STRUCTURE_PATH = "1/2/3/4";
 
@@ -65,6 +66,7 @@ public class TestConstant {
                      "id": 1,
                      "name": "FBI",
                      "activityType": "BOTH",
+                     "rankType": "military",
                      "path": "1/2/3/4",
                      "directorate": {
                              "id": 2,

@@ -50,6 +50,7 @@ public class TokenPayloadTest {
         assertThat(payload.getInstitutionId()).isEqualTo(TestConstant.USER_INSTITUTION_ID);
         assertThat(payload.getInstitutionName()).isEqualTo(TestConstant.USER_INSTITUTION_NAME);
         assertThat(payload.getInstitutionActivityType()).isEqualTo(TestConstant.INSTITUTION_ACTIVITY_TYPE);
+        assertThat(payload.getInstitutionRankType()).isEqualTo(TestConstant.RANK_TYPE);
         assertThat(payload.getStructurePath()).isEqualTo(TestConstant.USER_STRUCTURE_PATH);
 
         // Assert directorate information

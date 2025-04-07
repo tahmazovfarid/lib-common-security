@@ -82,6 +82,7 @@ public record UserPrincipal(
                 payload.getInstitutionId(),
                 payload.getInstitutionName(),
                 payload.getInstitutionActivityType(),
+                payload.getInstitutionRankType(),
                 payload.getStructurePath(),
                 resolveDirectorate(payload)
         );

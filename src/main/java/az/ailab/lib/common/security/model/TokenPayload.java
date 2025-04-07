@@ -28,6 +28,7 @@ public class TokenPayload {
     private Integer institutionId;
     private String institutionName;
     private String institutionActivityType;
+    private String institutionRankType;
     private String structurePath;
     private Long directStructureId;
 
@@ -79,6 +80,7 @@ public class TokenPayload {
         payload.institutionId = instNode.path("id").asInt();
         payload.institutionName = instNode.path("name").asText();
         payload.institutionActivityType = instNode.path("activityType").asText();
+        payload.institutionRankType = instNode.path("rankType").asText();
         payload.structurePath = instNode.path("path").asText();
         extractDirectorate(instNode.path("directorate"), payload);
     }

@@ -249,6 +249,17 @@ public final class UserContextHolder {
     }
 
     /**
+     * Retrieves the rank type of the current authenticated user's institution.
+     *
+     * @return the Rank type of the current authenticated user's institution, or {@code null} if not authenticated
+     */
+    public static String getInstitutionRankType() {
+        return Optional.ofNullable(getInstitution())
+                .map(InstitutionInfo::rankType)
+                .orElse(null);
+    }
+
+    /**
      * Checks whether the current user's institution acts as a provider.
      * <p>
      * A provider institution supplies services or resources within the system.
