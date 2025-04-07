@@ -9,8 +9,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -23,14 +23,14 @@ public abstract class AbstractTokenProvider {
 
     private final ObjectMapper objectMapper;
 
-    public Optional<TokenPayload> extractPayload(String token) {
-        String[] sections = token.split("\\.");
-        String payload = sections[SecurityConstant.PAYLOAD_INDEX];
-        byte[] decodedPayload = Base64.getUrlDecoder().decode(payload);
-        String payloadJson = new String(decodedPayload, StandardCharsets.UTF_8);
+    public Optional<TokenPayload> extractPayload(final String token) {
+        final String[] sections = token.split("\\.");
+        final String payload = sections[SecurityConstant.PAYLOAD_INDEX];
+        final byte[] decodedPayload = Base64.getUrlDecoder().decode(payload);
+        final String payloadJson = new String(decodedPayload, StandardCharsets.UTF_8);
 
         try {
-            JsonNode payloadNode = objectMapper.readTree(payloadJson);
+            final JsonNode payloadNode = objectMapper.readTree(payloadJson);
             return Optional.of(TokenPayload.fromJsonNode(payloadNode));
         } catch (JsonProcessingException ex) {
             log.error("Error processing payload json, message: {}", ex.getMessage());
@@ -39,13 +39,14 @@ public abstract class AbstractTokenProvider {
         return Optional.empty();
     }
 
-    public abstract Authentication buildAuthentication(TokenPayload tokenPayload);
+    public abstract Authentication buildAuthentication(final TokenPayload tokenPayload);
 
-    public List<GrantedAuthority> mapGrantedAuthorities(String role, Set<String> permissions) {
-        List<GrantedAuthority> authorities = new ArrayList<>();
+    public List<GrantedAuthority> mapGrantedAuthorities(final String role,
+                                                        final Map<String, String> permissions) {
+        final List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(SecurityConstant.ROLE_PREFIX + role));
 
-        authorities.addAll(permissions.stream()
+        authorities.addAll(permissions.keySet().stream()
                 .map(SimpleGrantedAuthority::new).toList());
 
         return authorities;

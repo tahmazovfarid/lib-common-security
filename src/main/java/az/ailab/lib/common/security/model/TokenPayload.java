@@ -1,43 +1,43 @@
 package az.ailab.lib.common.security.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.Data;
 
 @Data
 public class TokenPayload {
 
     private String subject;
-    private long issuedAt;
-    private long expirationTime;
+    private Long issuedAt;
+    private Long expirationTime;
 
-    private long userId;
-    private String fullName;
+    private Long userId;
+    private String firstName;
+    private String lastName;
     private String email;
 
     private String rank;
     private String position;
 
-    private long roleId;
+    private Long roleId;
     private String roleName;
-    private boolean isExecutor;
-    private Set<String> permissions = new HashSet<>();
+    private String roleType;
+    private Map<String, String> permissions = new HashMap<>();
 
-    private long organizationId;
-    private String organizationName;
-    private String organizationActivityType;
-    private long directOrganizationId;
-    private List<String> organizationPath = new ArrayList<>();
-    private List<OrganizationLevel> organizationHierarchy = new ArrayList<>();
+    private Integer institutionId;
+    private String institutionName;
+    private String institutionActivityType;
+    private String structurePath;
+    private Long directStructureId;
+
+    private Long directorateId;
+    private String directorateName;
+    private String directorateActivityType;
 
     private JsonNode payloadNode;
 
-    public static TokenPayload fromJsonNode(JsonNode jsonNode) {
+    public static TokenPayload fromJsonNode(final JsonNode jsonNode) {
         TokenPayload payload = new TokenPayload();
         payload.payloadNode = jsonNode;
 
@@ -45,73 +45,58 @@ public class TokenPayload {
 
         extractUserAndRoleInfo(jsonNode.path("user"), payload);
 
-        extractOrganizationInfo(jsonNode.path("organization"), payload);
+        extractInstitutionInfo(jsonNode.path("institution"), payload);
 
         return payload;
     }
 
-    private static void extractBasicFields(JsonNode jsonNode, TokenPayload payload) {
+    private static void extractBasicFields(final JsonNode jsonNode, final TokenPayload payload) {
         payload.subject = jsonNode.path("sub").asText();
         payload.issuedAt = jsonNode.path("iat").asLong();
         payload.expirationTime = jsonNode.path("exp").asLong();
     }
 
-    private static void extractUserAndRoleInfo(JsonNode userNode, TokenPayload payload) {
+    private static void extractUserAndRoleInfo(final JsonNode userNode, final TokenPayload payload) {
         payload.userId = userNode.path("id").asLong();
-        payload.fullName = userNode.path("fullname").asText();
+        payload.firstName = userNode.path("firstName").asText();
+        payload.lastName = userNode.path("lastName").asText();
         payload.email = userNode.path("email").asText();
         payload.rank = userNode.path("rank").asText();
         payload.position = userNode.path("position").asText();
+        payload.directStructureId = userNode.path("directStructureId").asLong();
 
-        JsonNode roleNode = userNode.path("role");
+        extractRoleInfo(userNode.path("role"), payload);
+    }
+
+    private static void extractRoleInfo(final JsonNode roleNode, final TokenPayload payload) {
         payload.roleId = roleNode.path("id").asLong();
         payload.roleName = roleNode.path("name").asText();
-        payload.isExecutor = roleNode.path("isExecutor").asBoolean();
-        payload.permissions = extractArrayAsStringSet(roleNode.path("permissions"));
+        payload.roleType = roleNode.path("type").asText();
+        payload.permissions = extractArrayAsMap(roleNode.path("permissions"));
     }
 
-    private static void extractOrganizationInfo(JsonNode orgNode, TokenPayload payload) {
-        payload.organizationId = orgNode.path("id").asLong();
-        payload.organizationName = orgNode.path("name").asText();
-        payload.organizationActivityType = orgNode.path("activityType").asText();
-        payload.directOrganizationId = orgNode.path("directOrganizationId").asLong();
-        payload.organizationPath = extractArrayAsStringList(orgNode.path("path"));
-        payload.organizationHierarchy = extractOrganizationHierarchy(orgNode.path("hierarchy"));
+    private static void extractInstitutionInfo(final JsonNode instNode, final TokenPayload payload) {
+        payload.institutionId = instNode.path("id").asInt();
+        payload.institutionName = instNode.path("name").asText();
+        payload.institutionActivityType = instNode.path("activityType").asText();
+        payload.structurePath = instNode.path("path").asText();
+        extractDirectorate(instNode.path("directorate"), payload);
     }
 
-    private static Set<String> extractArrayAsStringSet(JsonNode arrayNode) {
-        if (!arrayNode.isArray()) {
-            return new HashSet<>();
+    private static void extractDirectorate(final JsonNode directorateNode, final TokenPayload payload) {
+        if (directorateNode != null && !directorateNode.isNull() && !directorateNode.isMissingNode()) {
+            payload.directorateId = directorateNode.path("id").asLong();
+            payload.directorateName = directorateNode.path("name").asText();
+            payload.directorateActivityType = directorateNode.path("activityType").asText();
         }
-
-        return StreamSupport.stream(arrayNode.spliterator(), false)
-                .map(JsonNode::asText)
-                .collect(Collectors.toSet());
     }
 
-    private static List<String> extractArrayAsStringList(JsonNode arrayNode) {
-        if (!arrayNode.isArray()) {
-            return new ArrayList<>();
-        }
-
-        return StreamSupport.stream(arrayNode.spliterator(), false)
-                .map(JsonNode::asText)
-                .collect(Collectors.toList());
-    }
-
-    private static List<OrganizationLevel> extractOrganizationHierarchy(JsonNode hierarchyNode) {
-        if (!hierarchyNode.isArray()) {
-            return new ArrayList<>();
-        }
-
-        return StreamSupport.stream(hierarchyNode.spliterator(), false)
-                .map(node -> new OrganizationLevel(
-                        node.path("id").asLong(),
-                        node.path("name").asText(),
-                        node.path("activityType").asText(),
-                        node.path("level").asInt(),
-                        node.path("parentId").asLong()
-                )).collect(Collectors.toList());
+    private static Map<String, String> extractArrayAsMap(final JsonNode jsonNode) {
+        final Map<String, String> map = new HashMap<>();
+        jsonNode.fields().forEachRemaining(
+                entry -> map.put(entry.getKey(), entry.getValue().asText())
+        );
+        return map;
     }
 
 }

@@ -22,10 +22,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private final AbstractTokenProvider tokenProvider;
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request,
-                                    @NonNull HttpServletResponse response,
-                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
-        String jwt = resolveToken(request);
+    protected void doFilterInternal(@NonNull final HttpServletRequest request,
+                                    @NonNull final HttpServletResponse response,
+                                    @NonNull final FilterChain filterChain) throws ServletException, IOException {
+        final String jwt = resolveToken(request);
 
         if (StringUtils.isNotBlank(jwt)) {
             buildAuthentication(jwt)
@@ -36,17 +36,17 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    public Optional<Authentication> buildAuthentication(String jwt) {
+    public Optional<Authentication> buildAuthentication(final String jwt) {
         return tokenProvider.extractPayload(jwt)
                 .map(tokenProvider::buildAuthentication);
     }
 
-    private String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+    private String resolveToken(final HttpServletRequest request) {
+        final String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         return extractBearerToken(bearerToken);
     }
 
-    private String extractBearerToken(String bearerToken) {
+    private String extractBearerToken(final String bearerToken) {
         if (StringUtils.isNotEmpty(bearerToken) && bearerToken.startsWith(SecurityConstant.BEARER)) {
             return bearerToken.substring(SecurityConstant.BEARER.length());
         }

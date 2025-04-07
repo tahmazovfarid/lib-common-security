@@ -16,12 +16,10 @@ public class SecurityErrorHandler extends CommonErrorHandler {
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseWrapper<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex) {
+    public ResponseWrapper<ErrorResponse> handleAccessDeniedException(final AccessDeniedException ex) {
         log.error("Forbidden, message: {}", ex.getMessage());
-        var response = ErrorResponse.build(
-                HttpStatus.FORBIDDEN,
-                ex.getMessage()
-        );
+        final ErrorResponse response = ErrorResponse.build(HttpStatus.FORBIDDEN, ex.getMessage());
+
         return ResponseWrapper.error(response);
     }
 

@@ -21,39 +21,39 @@ public class ClientAuthInterceptor implements RequestInterceptor {
     private final Map<String, String> clientApiKeys;
 
     @Override
-    public void apply(RequestTemplate template) {
-        Optional<ClientAuth> authAnnotation = getEffectiveAuthAnnotation(template);
+    public void apply(final RequestTemplate template) {
+        final Optional<ClientAuth> authAnnotation = getEffectiveAuthAnnotation(template);
 
         if (authAnnotation.isEmpty() || !authAnnotation.get().enabled()) {
             return;
         }
 
-        ClientAuth auth = authAnnotation.get();
+        final ClientAuth auth = authAnnotation.get();
 
-        String targetClientName = getTargetClientName(template, auth);
+        final String targetClientName = getTargetClientName(template, auth);
 
         addApiKeyToHeader(template, targetClientName);
 
         forwardAuthorizationHeader(template, auth);
     }
 
-    private Optional<ClientAuth> getEffectiveAuthAnnotation(RequestTemplate template) {
-        Method method = template.methodMetadata().method();
-        Class<?> declaringClass = method.getDeclaringClass();
+    private Optional<ClientAuth> getEffectiveAuthAnnotation(final RequestTemplate template) {
+        final Method method = template.methodMetadata().method();
+        final Class<?> declaringClass = method.getDeclaringClass();
 
-        ClientAuth methodAuth = method.getAnnotation(ClientAuth.class);
-        ClientAuth classAuth = declaringClass.getAnnotation(ClientAuth.class);
+        final ClientAuth methodAuth = method.getAnnotation(ClientAuth.class);
+        final ClientAuth classAuth = declaringClass.getAnnotation(ClientAuth.class);
 
         return Optional.ofNullable(methodAuth != null ? methodAuth : classAuth);
     }
 
-    private String getTargetClientName(RequestTemplate template, ClientAuth auth) {
-        String clientName = auth.clientName();
+    private String getTargetClientName(final RequestTemplate template, final ClientAuth auth) {
+        final String clientName = auth.clientName();
         return StringUtils.isNotBlank(clientName) ? clientName : template.feignTarget().name();
     }
 
-    private void addApiKeyToHeader(RequestTemplate template, String targetClientName) {
-        String apiKey = clientApiKeys.get(targetClientName);
+    private void addApiKeyToHeader(final RequestTemplate template, final String targetClientName) {
+        final String apiKey = clientApiKeys.get(targetClientName);
         if (apiKey != null) {
             template.header(SecurityConstant.X_SERVICE_NAME, srcServiceName);
             template.header(SecurityConstant.X_Client_API_KEY, apiKey);
@@ -63,7 +63,7 @@ public class ClientAuthInterceptor implements RequestInterceptor {
         }
     }
 
-    private void forwardAuthorizationHeader(RequestTemplate template, ClientAuth auth) {
+    private void forwardAuthorizationHeader(final RequestTemplate template, final ClientAuth auth) {
         if (auth.forwardAuthorizationHeader()) {
             SecurityUtil.getAuthorizationHeaderOpt()
                     .ifPresent(bearerToken -> template.header(HttpHeaders.AUTHORIZATION, bearerToken));

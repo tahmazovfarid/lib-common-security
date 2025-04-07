@@ -12,13 +12,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserTokenProvider extends AbstractTokenProvider {
 
-    public UserTokenProvider(ObjectMapper objectMapper) {
+    public UserTokenProvider(final ObjectMapper objectMapper) {
         super(objectMapper);
     }
 
-    public Authentication buildAuthentication(TokenPayload tokenPayload) {
-        List<GrantedAuthority> authorities = mapGrantedAuthorities(tokenPayload.getRoleName(), tokenPayload.getPermissions());
-        UserPrincipal userPrincipal = UserPrincipal.of(tokenPayload, authorities);
+    public Authentication buildAuthentication(final TokenPayload tokenPayload) {
+        final List<GrantedAuthority> authorities = mapGrantedAuthorities(tokenPayload.getRoleName(), tokenPayload.getPermissions());
+        final UserPrincipal userPrincipal = UserPrincipal.of(tokenPayload, authorities);
 
         return new UsernamePasswordAuthenticationToken(
                 userPrincipal,

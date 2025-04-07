@@ -1,73 +1,97 @@
 package az.ailab.lib.common.security.model;
 
-import az.ailab.lib.common.security.model.enums.ActivityType;
+import az.ailab.lib.common.security.model.enums.Permission;
+import az.ailab.lib.common.security.model.enums.PermissionLevel;
+import az.ailab.lib.common.security.model.enums.RoleType;
+import az.ailab.lib.common.security.model.vo.DirectorateInfo;
+import az.ailab.lib.common.security.model.vo.InstitutionInfo;
+import az.ailab.lib.common.security.model.vo.UserRole;
+import az.ailab.lib.common.util.EnumUtil;
+import java.util.EnumMap;
 import java.util.List;
-import java.util.Optional;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import java.util.Map;
 import org.springframework.security.core.GrantedAuthority;
 
-@Getter
-@ToString
-@EqualsAndHashCode
-@AllArgsConstructor
-public class UserPrincipal {
+public record UserPrincipal(
+        Long id,
+        String firstName,
+        String lastName,
+        String email,
+        String pin,
+        String rank,
+        String position,
+        Long directStructureId,
+        UserRole role,
+        List<GrantedAuthority> authorities,
+        InstitutionInfo institution,
+        TokenPayload payload) {
 
-    private long id;
-    private String fullName;
-    private String email;
-    private String pin;
-
-    private String rank;
-    private String position;
-
-    private UserRole role;
-    private List<GrantedAuthority> authorities;
-    private UserOrganization organization;
-
-    private TokenPayload payload;
-
-    public boolean isOrgProvider() {
-        return Optional.ofNullable(organization)
-                .map(UserOrganization::getActivityType)
-                .filter(type -> type == ActivityType.PROVIDER || type == ActivityType.BOTH)
-                .isPresent();
-    }
-
-    public static UserPrincipal of(TokenPayload payload, List<GrantedAuthority> authorities) {
+    public static UserPrincipal of(final TokenPayload payload, final List<GrantedAuthority> authorities) {
         return new UserPrincipal(
                 payload.getUserId(),
-                payload.getFullName(),
+                payload.getFirstName(),
+                payload.getLastName(),
                 payload.getEmail(),
                 payload.getSubject(),
                 payload.getRank(),
                 payload.getPosition(),
-                buildUserRole(payload),
+                payload.getDirectStructureId(),
+                resolveUserRole(payload),
                 authorities,
-                buildUserOrganization(payload),
+                resolveUserInstitution(payload),
                 payload
         );
     }
 
-    private static UserRole buildUserRole(TokenPayload payload) {
+    private static UserRole resolveUserRole(final TokenPayload payload) {
+        final RoleType roleType = resolveRoleType(payload.getRoleType());
+        final Map<Permission, PermissionLevel> permissionsMap = resolvePermissions(payload.getPermissions());
+
         return new UserRole(
                 payload.getRoleId(),
                 payload.getRoleName(),
-                payload.isExecutor(),
-                payload.getPermissions()
+                roleType,
+                permissionsMap
         );
     }
 
-    private static UserOrganization buildUserOrganization(TokenPayload payload) {
-        return new UserOrganization(
-                payload.getOrganizationId(),
-                payload.getOrganizationName(),
-                payload.getOrganizationActivityType(),
-                payload.getDirectOrganizationId(),
-                payload.getOrganizationPath(),
-                payload.getOrganizationHierarchy()
+    private static Map<Permission, PermissionLevel> resolvePermissions(final Map<String, String> permissions) {
+        final Map<Permission, PermissionLevel> permissionsMap = new EnumMap<>(Permission.class);
+
+        permissions.forEach((key, value) -> {
+            final Permission permission = EnumUtil.getOptEnumConstant(Permission.class, key)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid permission: " + key));
+
+            final PermissionLevel permissionLevel = EnumUtil.getOptEnumConstant(PermissionLevel.class, value)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid permission level: " + value));
+
+            permissionsMap.put(permission, permissionLevel);
+        });
+
+        return permissionsMap;
+    }
+
+    private static RoleType resolveRoleType(final String roleType) {
+        return EnumUtil.getOptEnumConstant(RoleType.class, roleType)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid role type: " + roleType));
+
+    }
+
+    private static InstitutionInfo resolveUserInstitution(final TokenPayload payload) {
+        return new InstitutionInfo(
+                payload.getInstitutionId(),
+                payload.getInstitutionName(),
+                payload.getInstitutionActivityType(),
+                payload.getStructurePath(),
+                resolveDirectorate(payload)
+        );
+    }
+
+    private static DirectorateInfo resolveDirectorate(final TokenPayload payload) {
+        return new DirectorateInfo(
+                payload.getDirectorateId(),
+                payload.getDirectorateName(),
+                payload.getDirectorateActivityType()
         );
     }
 

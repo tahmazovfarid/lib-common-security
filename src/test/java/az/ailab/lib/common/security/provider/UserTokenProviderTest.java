@@ -10,10 +10,10 @@ import az.ailab.lib.common.security.constants.SecurityConstant;
 import az.ailab.lib.common.security.contant.TestConstant;
 import az.ailab.lib.common.security.model.TokenPayload;
 import az.ailab.lib.common.security.model.UserPrincipal;
+import az.ailab.lib.common.security.model.enums.Permission;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,11 +31,12 @@ public class UserTokenProviderTest {
     @Test
     void testBuildAuthentication() {
         String roleName = TestConstant.ADMIN;
-        Set<String> permissions = new HashSet<>(Set.of(TestConstant.USER_READ, TestConstant.USER_WRITE));
+        Map<String, String> permissions = TestConstant.PERMISSIONS;
 
         TokenPayload tokenPayload = mock(TokenPayload.class);
         when(tokenPayload.getRoleName()).thenReturn(roleName);
         when(tokenPayload.getPermissions()).thenReturn(permissions);
+        when(tokenPayload.getRoleType()).thenReturn(TestConstant.ROLE_TYPE);
 
         Authentication authentication = userTokenProvider.buildAuthentication(tokenPayload);
 
@@ -47,12 +48,12 @@ public class UserTokenProviderTest {
 
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 
-        assertThat(tokenPayload).isEqualTo(userPrincipal.getPayload());
+        assertThat(tokenPayload).isEqualTo(userPrincipal.payload());
 
         List<GrantedAuthority> authorities = new ArrayList<>(authentication.getAuthorities());
         assertThat(authorities).isNotNull();
 
-        assertThat(authorities.size()).isEqualTo(3);
+        assertThat(authorities.size()).isEqualTo(4);
 
         assertThat(authorities)
                 .extracting(GrantedAuthority::getAuthority)
@@ -60,7 +61,7 @@ public class UserTokenProviderTest {
 
         assertThat(authorities)
                 .extracting(GrantedAuthority::getAuthority)
-                .contains(TestConstant.USER_READ, TestConstant.USER_WRITE);
+                .contains(Permission.ORDER_READ.name(), Permission.USER_READ.name());
 
         verify(tokenPayload, times(2)).getRoleName();
         verify(tokenPayload, times(2)).getPermissions();

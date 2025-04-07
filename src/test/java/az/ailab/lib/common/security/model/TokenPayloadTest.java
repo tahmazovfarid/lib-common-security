@@ -33,28 +33,30 @@ public class TokenPayloadTest {
         assertThat(payload.getIssuedAt()).isEqualTo(TestConstant.IAT);
         assertThat(payload.getExpirationTime()).isEqualTo(TestConstant.EXP);
         assertThat(payload.getUserId()).isEqualTo(TestConstant.USER_ID);
-        assertThat(payload.getFullName()).isEqualTo(TestConstant.USER_FULL_NAME);
+        assertThat(payload.getFirstName()).isEqualTo(TestConstant.FIRST_NAME);
+        assertThat(payload.getLastName()).isEqualTo(TestConstant.LAST_NAME);
         assertThat(payload.getEmail()).isEqualTo(TestConstant.USER_EMAIL);
         assertThat(payload.getRank()).isEqualTo(TestConstant.USER_RANK);
         assertThat(payload.getPosition()).isEqualTo(TestConstant.USER_POSITION);
+        assertThat(payload.getDirectStructureId()).isEqualTo(TestConstant.USER_DIRECT_STRUCTURE_ID);
 
         // Assert role information
         assertThat(payload.getRoleId()).isEqualTo(TestConstant.USER_ROLE_ID);
         assertThat(payload.getRoleName()).isEqualTo(TestConstant.USER_ROLE_NAME);
-        assertThat(payload.isExecutor()).isEqualTo(TestConstant.USER_ROLE_IS_EXECUTOR);
-        assertThat(payload.getPermissions()).isEqualTo(TestConstant.USER_ROLE_PERMISSIONS);
+        assertThat(payload.getRoleType()).isEqualTo(TestConstant.ROLE_TYPE);
+        assertThat(payload.getPermissions()).isEqualTo(TestConstant.PERMISSIONS);
 
-        // Assert organization information
-        assertThat(payload.getOrganizationId()).isEqualTo(TestConstant.USER_ORGANIZATION_ID);
-        assertThat(payload.getOrganizationName()).isEqualTo(TestConstant.USER_ORGANIZATION_NAME);
-        assertThat(payload.getOrganizationPrivilege()).isEqualTo(TestConstant.USER_ORGANIZATION_PRIVILEGE);
-        assertThat(payload.getDirectOrganizationId()).isEqualTo(TestConstant.USER_DIRECT_ORGANIZATION_ID);
-        assertThat(payload.getOrganizationPath()).isEqualTo(TestConstant.USER_ORGANIZATION_PATH);
+        // Assert institution information
+        assertThat(payload.getInstitutionId()).isEqualTo(TestConstant.USER_INSTITUTION_ID);
+        assertThat(payload.getInstitutionName()).isEqualTo(TestConstant.USER_INSTITUTION_NAME);
+        assertThat(payload.getInstitutionActivityType()).isEqualTo(TestConstant.INSTITUTION_ACTIVITY_TYPE);
+        assertThat(payload.getStructurePath()).isEqualTo(TestConstant.USER_STRUCTURE_PATH);
 
-        // Assert organization hierarchy
-        assertThat(payload.getOrganizationHierarchy())
-                .hasSize(3)
-                .isEqualTo(TestConstant.USER_ORGANIZATION_HIERARCHY);
+        // Assert directorate information
+        assertThat(payload.getDirectorateId()).isEqualTo(TestConstant.USER_DIRECTORATE_ID);
+        assertThat(payload.getDirectorateName()).isEqualTo(TestConstant.USER_DIRECTORATE_NAME);
+        assertThat(payload.getDirectorateActivityType()).isEqualTo(TestConstant.DIRECTORATE_ACTIVITY_TYPE);
+
     }
 
     @Test
