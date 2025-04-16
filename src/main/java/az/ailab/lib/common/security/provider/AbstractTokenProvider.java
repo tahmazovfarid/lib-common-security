@@ -1,5 +1,6 @@
 package az.ailab.lib.common.security.provider;
 
+import az.ailab.lib.common.error.ServiceException;
 import az.ailab.lib.common.security.constants.SecurityConstant;
 import az.ailab.lib.common.security.model.TokenPayload;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -36,6 +37,8 @@ public abstract class AbstractTokenProvider {
             } catch (JsonProcessingException ex) {
                 log.error("Error processing payload json, message: {}", ex.getMessage());
             }
+        } else {
+            throw ServiceException.forbidden("Invalid token: " + token);
         }
 
         return Optional.empty();
