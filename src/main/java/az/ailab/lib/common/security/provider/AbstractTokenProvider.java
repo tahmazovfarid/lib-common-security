@@ -26,7 +26,7 @@ public abstract class AbstractTokenProvider {
 
     public Optional<TokenPayload> extractPayload(final String token) {
         final String[] sections = token.split("\\.");
-        if (sections.length == 2) {
+        if (sections.length == 3) {
             final String payload = sections[SecurityConstant.PAYLOAD_INDEX];
             final byte[] decodedPayload = Base64.getUrlDecoder().decode(payload);
             final String payloadJson = new String(decodedPayload, StandardCharsets.UTF_8);
