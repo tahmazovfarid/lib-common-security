@@ -1,8 +1,8 @@
 package az.ailab.lib.common.security.error;
 
-import az.ailab.lib.common.dto.response.ResponseWrapper;
-import az.ailab.lib.common.error.CommonErrorHandler;
-import az.ailab.lib.common.error.ErrorResponse;
+import az.ailab.lib.common.error.handler.CommonErrorHandler;
+import az.ailab.lib.common.model.dto.response.ErrorResponse;
+import az.ailab.lib.common.model.dto.response.ResponseWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;

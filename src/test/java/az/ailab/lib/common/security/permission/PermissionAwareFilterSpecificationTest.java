@@ -12,7 +12,7 @@ import static org.mockito.Mockito.when;
 import az.ailab.lib.common.security.context.UserContextHolder;
 import az.ailab.lib.common.security.model.enums.Permission;
 import az.ailab.lib.common.security.model.enums.PermissionLevel;
-import az.ailab.lib.common.util.filter.FilterOperations;
+import az.ailab.lib.common.util.specification.FilterOperations;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Expression;

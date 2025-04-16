@@ -19,6 +19,17 @@ configurations {
     }
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(javaVersion)
+    }
+
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+    withJavadocJar()
+    withSourcesJar()
+}
+
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
@@ -67,7 +78,7 @@ publishing {
     }
 }
 
-tasks.withType(Javadoc) {
+tasks.withType(Javadoc).configureEach {
     options.addStringOption('Xdoclint:none', '-quiet')
     failOnError = false
 }

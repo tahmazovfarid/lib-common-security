@@ -1,14 +1,14 @@
 package az.ailab.lib.common.security.permission;
 
-import static az.ailab.lib.common.util.filter.FilterOperations.alwaysTrue;
-import static az.ailab.lib.common.util.filter.FilterOperations.startsWith;
+import static az.ailab.lib.common.util.specification.FilterOperations.alwaysTrue;
+import static az.ailab.lib.common.util.specification.FilterOperations.startsWith;
 
 import az.ailab.lib.common.error.ServiceException;
 import az.ailab.lib.common.security.context.UserContextHolder;
 import az.ailab.lib.common.security.model.enums.Permission;
 import az.ailab.lib.common.security.model.enums.PermissionLevel;
-import az.ailab.lib.common.util.filter.FilterOperations;
-import az.ailab.lib.common.util.filter.FilterSpecification;
+import az.ailab.lib.common.util.specification.FilterOperations;
+import az.ailab.lib.common.util.specification.FilterSpecification;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Root;
 import java.util.Map;
