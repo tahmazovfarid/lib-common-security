@@ -1,14 +1,12 @@
 package az.ailab.lib.common.security.provider;
 
-import az.ailab.lib.common.error.ServiceException;
 import az.ailab.lib.common.security.constants.SecurityConstant;
 import az.ailab.lib.common.security.model.TokenPayload;
+import az.ailab.lib.common.security.util.SecurityUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,20 +23,12 @@ public abstract class AbstractTokenProvider {
     private final ObjectMapper objectMapper;
 
     public Optional<TokenPayload> extractPayload(final String token) {
-        final String[] sections = token.split("\\.");
-        if (sections.length == 3) {
-            final String payload = sections[SecurityConstant.PAYLOAD_INDEX];
-            final byte[] decodedPayload = Base64.getUrlDecoder().decode(payload);
-            final String payloadJson = new String(decodedPayload, StandardCharsets.UTF_8);
-
-            try {
-                final JsonNode payloadNode = objectMapper.readTree(payloadJson);
-                return Optional.of(TokenPayload.fromJsonNode(payloadNode));
-            } catch (JsonProcessingException ex) {
-                log.error("Error processing payload json, message: {}", ex.getMessage());
-            }
-        } else {
-            throw ServiceException.forbidden("Invalid token: " + token);
+        try {
+            final String payloadJson = SecurityUtil.extractPayload(token);
+            final JsonNode payloadNode = objectMapper.readTree(payloadJson);
+            return Optional.of(TokenPayload.fromJsonNode(payloadNode));
+        } catch (JsonProcessingException ex) {
+            log.error("Error processing payload json, message: {}", ex.getMessage());
         }
 
         return Optional.empty();
