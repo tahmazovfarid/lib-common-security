@@ -47,29 +47,6 @@ public final class SecurityUtil {
     }
 
     /**
-     * Extracts the payload segment from a JWT and returns it as a decoded UTF‑8 JSON string.
-     * <p>
-     * Splits the token on “.”, verifies it has exactly three parts (header, payload, signature),
-     * Base64‑URL decodes the payload section, and converts it to a UTF‑8 string.
-     * </p>
-     *
-     * @param token the JWT string in the form "header.payload.signature"; must not be null or empty
-     * @return the decoded payload JSON as a UTF‑8 string
-     * @throws IllegalArgumentException if the token does not consist of three segments or the payload cannot be decoded
-     */
-    public static String extractPayload(@NotNull final String token) {
-        final String[] sections = token.split("\\.");
-
-        if (sections.length == 3) {
-            final String payload = sections[SecurityConstant.PAYLOAD_INDEX];
-            final byte[] decodedPayload = Base64.getUrlDecoder().decode(payload);
-            return new String(decodedPayload, StandardCharsets.UTF_8);
-        } else {
-            throw new IllegalArgumentException("Invalid token: " + token);
-        }
-    }
-
-    /**
      * Retrieves the full Authorization header value.
      *
      * <p>Returns the complete Authorization header if present,

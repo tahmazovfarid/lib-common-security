@@ -36,13 +36,18 @@ repositories {
 }
 
 dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-web"
     api "org.springframework.boot:spring-boot-starter-security"
     api "org.springframework.cloud:spring-cloud-starter-openfeign"
+    implementation "org.springframework.boot:spring-boot-starter-web"
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     implementation "io.github.openfeign:feign-annotation-error-decoder:${openFeignVersion}"
     implementation "io.github.openfeign:feign-jackson:${openFeignVersion}"
+
+    api "io.jsonwebtoken:jjwt-api:${jsonWebTokenVersion}"
+    runtimeOnly "io.jsonwebtoken:jjwt-impl:${jsonWebTokenVersion}"
+    runtimeOnly "io.jsonwebtoken:jjwt-jackson:${jsonWebTokenVersion}"
+
     implementation "com.github.tahmazovfarid:lib-common:${libCommonVersion}"
 
     api "javax.validation:validation-api:${validationVersion}"

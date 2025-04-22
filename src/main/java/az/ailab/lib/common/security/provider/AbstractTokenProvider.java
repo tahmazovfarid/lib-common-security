@@ -2,7 +2,7 @@ package az.ailab.lib.common.security.provider;
 
 import az.ailab.lib.common.security.constants.SecurityConstant;
 import az.ailab.lib.common.security.model.TokenPayload;
-import az.ailab.lib.common.security.util.SecurityUtil;
+import az.ailab.lib.common.security.util.JwtUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,7 +24,7 @@ public abstract class AbstractTokenProvider {
 
     public Optional<TokenPayload> extractPayload(final String token) {
         try {
-            final String payloadJson = SecurityUtil.extractPayload(token);
+            final String payloadJson = JwtUtil.decodePayloadNoVerify(token);
             final JsonNode payloadNode = objectMapper.readTree(payloadJson);
             return Optional.of(TokenPayload.fromJsonNode(payloadNode));
         } catch (JsonProcessingException ex) {
