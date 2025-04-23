@@ -28,13 +28,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                                     @NonNull final HttpServletResponse response,
                                     @NonNull final FilterChain filterChain) throws ServletException, IOException {
         final String jwt = resolveToken(request);
-
         if (StringUtils.isNotBlank(jwt)) {
             buildAuthentication(jwt)
                     .ifPresent(authentication -> SecurityContextHolder.getContext()
                             .setAuthentication(authentication));
         }
-
         filterChain.doFilter(request, response);
     }
 

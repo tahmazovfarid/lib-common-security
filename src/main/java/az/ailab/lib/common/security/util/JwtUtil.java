@@ -34,8 +34,8 @@ public final class JwtUtil {
      * @return a {@link Jws} containing {@link Header} and {@link Claims}
      * @throws JwtException if parsing or signature validation fails (expired, tampered, etc.)
      */
-    public static Jws<Claims> parseAndValidate(String token, String secretKey) {
-        byte[] keyBytes = Base64.getDecoder().decode(secretKey);
+    public static Jws<Claims> parseAndValidate(final String token, final String secretKey) {
+        final byte[] keyBytes = Base64.getDecoder().decode(secretKey);
         return Jwts.parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor(keyBytes))
                 .build()
@@ -50,7 +50,7 @@ public final class JwtUtil {
      * @return the JWT claims
      * @throws JwtException if token is invalid or signature check fails
      */
-    public static Claims getClaims(String token, String secretKey) {
+    public static Claims getClaims(final String token, final String secretKey) {
         return parseAndValidate(token, secretKey).getBody();
     }
 
@@ -63,7 +63,7 @@ public final class JwtUtil {
      * @return the JWT header (alg, typ, etc.)
      * @throws JwtException if token is invalid
      */
-    public static JwsHeader<?> getHeader(String token, String secretKey) {
+    public static JwsHeader<?> getHeader(final String token, final String secretKey) {
         return parseAndValidate(token, secretKey).getHeader();
     }
 
@@ -75,8 +75,8 @@ public final class JwtUtil {
      * @return the {@link Instant} of expiration, or null if none
      * @throws JwtException if token is invalid
      */
-    public static Instant getExpiration(String token, String secretKey) {
-        Date exp = getClaims(token, secretKey).getExpiration();
+    public static Instant getExpiration(final String token, final String secretKey) {
+        final Date exp = getClaims(token, secretKey).getExpiration();
         return (exp != null ? exp.toInstant() : null);
     }
 
@@ -88,8 +88,8 @@ public final class JwtUtil {
      * @return true if now is after the token's exp claim, false otherwise
      * @throws JwtException if token is invalid
      */
-    public static boolean isExpired(String token, String secretKey) {
-        Instant exp = getExpiration(token, secretKey);
+    public static boolean isExpired(final String token, final String secretKey) {
+        final Instant exp = getExpiration(token, secretKey);
         return (exp != null && Instant.now().isAfter(exp));
     }
 
