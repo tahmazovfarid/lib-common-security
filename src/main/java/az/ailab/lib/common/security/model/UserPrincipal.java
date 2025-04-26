@@ -74,7 +74,7 @@ public record UserPrincipal(
                 payload.getSubject(),
                 payload.getRank(),
                 payload.getPosition(),
-                payload.getDirectStructureId(),
+                payload.getStructureId(),
                 resolveUserRole(payload),
                 authorities,
                 resolveUserInstitution(payload),

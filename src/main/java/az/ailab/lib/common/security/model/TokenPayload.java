@@ -32,7 +32,7 @@ public class TokenPayload {
     private String email;
     private String rank;
     private String position;
-    private Long directStructureId;
+    private Long structureId;
 
     // Role details
     private Long roleId;
@@ -101,7 +101,7 @@ public class TokenPayload {
         payload.email = userNode.path(TokenField.EMAIL).asText();
         payload.rank = userNode.path(TokenField.RANK).asText();
         payload.position = userNode.path(TokenField.POSITION).asText();
-        payload.directStructureId = userNode.path(TokenField.DIRECT_STRUCTURE_ID).asLong();
+        payload.structureId = userNode.path(TokenField.DIRECT_STRUCTURE_ID).asLong();
 
         extractRoleInfo(userNode.path(TokenField.ROLE), payload);
     }
@@ -137,7 +137,7 @@ public class TokenPayload {
     /**
      * Optionally extracts directorate fields if present.
      *
-     * @param directorateNode the JSON node under the "directorate" key (may be missing)
+     * @param directorateNode the JSON node under the "directorate" key (maybe missing)
      * @param payload         the target payload object to populate
      */
     private static void extractDirectorate(final JsonNode directorateNode, final TokenPayload payload) {

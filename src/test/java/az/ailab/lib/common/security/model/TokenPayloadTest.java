@@ -38,7 +38,7 @@ public class TokenPayloadTest {
         assertThat(payload.getEmail()).isEqualTo(TestConstant.USER_EMAIL);
         assertThat(payload.getRank()).isEqualTo(TestConstant.USER_RANK);
         assertThat(payload.getPosition()).isEqualTo(TestConstant.USER_POSITION);
-        assertThat(payload.getDirectStructureId()).isEqualTo(TestConstant.USER_DIRECT_STRUCTURE_ID);
+        assertThat(payload.getStructureId()).isEqualTo(TestConstant.USER_DIRECT_STRUCTURE_ID);
 
         // Assert role information
         assertThat(payload.getRoleId()).isEqualTo(TestConstant.USER_ROLE_ID);

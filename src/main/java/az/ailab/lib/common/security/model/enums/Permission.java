@@ -1,5 +1,7 @@
 package az.ailab.lib.common.security.model.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum Permission {
 
     // User management
@@ -32,19 +34,16 @@ public enum Permission {
     // Support Management
     SUPPORT_READ,
     SUPPORT_CREATE,
-    SUPPORT_APPROVE,
+    SUPPORT_EDIT,
     SUPPORT_DELETE,
 
     // Personal information management
-    PERSONAL_READ,
-    PERSONAL_CREATE,
     PERSONAL_EDIT,
 
     // Request submission management
     REQUEST_READ,
     REQUEST_CREATE,
     REQUEST_EDIT,
-    REQUEST_APPROVE,
 
     // Inquiry receiving management
     INQUIRY_RECEIVING_READ,
@@ -55,13 +54,17 @@ public enum Permission {
     // Order management
     ORDER_READ,
     ORDER_CREATE,
-    ORDER_ASSIGN,
-    ORDER_APPROVE,
+    ORDER_EDIT,
 
-    // Inquiry management
-    INQUIRY_READ,
-    INQUIRY_CREATE,
-    INQUIRY_ASSIGN,
-    INQUIRY_APPROVE,
+    // Flow management
+    FLOW_READ,
+    FLOW_CREATE,
+    FLOW_EDIT,
+    INQUIRY_APPROVE;
+
+    @JsonValue
+    public String toValue() {
+        return name();
+    }
 
 }
