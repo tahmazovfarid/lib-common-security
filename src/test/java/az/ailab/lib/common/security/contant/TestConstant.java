@@ -1,7 +1,7 @@
 package az.ailab.lib.common.security.contant;
 
 import az.ailab.lib.common.security.model.enums.ActivityType;
-import az.ailab.lib.common.security.model.enums.Permission;
+import az.ailab.lib.common.security.model.enums.PermissionEnum;
 import az.ailab.lib.common.security.model.enums.PermissionLevel;
 import az.ailab.lib.common.security.model.enums.RoleType;
 import java.util.Map;
@@ -10,9 +10,9 @@ public class TestConstant {
 
     public static final String ADMIN = "ADMIN";
     public static final Map<String, String> PERMISSIONS = Map.of(
-            Permission.ORDER_READ.name(), PermissionLevel.INSTITUTION.name(),
-            Permission.USER_EDIT.name(), PermissionLevel.PERSONAL.name(),
-            Permission.USER_READ.name(), PermissionLevel.INSTITUTION.name()
+            PermissionEnum.ORDER_READ.name(), PermissionLevel.INSTITUTION.name(),
+            PermissionEnum.USER_EDIT.name(), PermissionLevel.PERSONAL.name(),
+            PermissionEnum.USER_READ.name(), PermissionLevel.INSTITUTION.name()
     );
 
     public static final String SUB = "abcd123";

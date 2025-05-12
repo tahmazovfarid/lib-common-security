@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 
 import az.ailab.lib.common.error.ServiceException;
 import az.ailab.lib.common.security.context.UserContextHolder;
-import az.ailab.lib.common.security.model.enums.Permission;
+import az.ailab.lib.common.security.model.enums.PermissionEnum;
 import az.ailab.lib.common.security.model.enums.PermissionLevel;
 import az.ailab.lib.common.security.permission.vo.EntityContext;
 import java.util.HashMap;
@@ -41,12 +41,12 @@ class PermissionCheckerTest {
             // Setup UserContextHolder mocks
             mockedStatic.when(UserContextHolder::isAuthenticated).thenReturn(true);
 
-            Map<Permission, PermissionLevel> permissions = new HashMap<>();
-            permissions.put(Permission.ORDER_READ, PermissionLevel.SYSTEM);
+            Map<PermissionEnum, PermissionLevel> permissions = new HashMap<>();
+            permissions.put(PermissionEnum.ORDER_READ, PermissionLevel.SYSTEM);
             mockedStatic.when(UserContextHolder::getPermissions).thenReturn(permissions);
 
             // Execute and verify no exception is thrown for system level
-            assertDoesNotThrow(() -> permissionChecker.check(Permission.ORDER_READ));
+            assertDoesNotThrow(() -> permissionChecker.check(PermissionEnum.ORDER_READ));
         }
     }
 
@@ -56,8 +56,8 @@ class PermissionCheckerTest {
             // Setup UserContextHolder mocks
             mockedStatic.when(UserContextHolder::isAuthenticated).thenReturn(true);
 
-            Map<Permission, PermissionLevel> permissions = new HashMap<>();
-            permissions.put(Permission.ORDER_READ, PermissionLevel.INSTITUTION);
+            Map<PermissionEnum, PermissionLevel> permissions = new HashMap<>();
+            permissions.put(PermissionEnum.ORDER_READ, PermissionLevel.INSTITUTION);
             mockedStatic.when(UserContextHolder::getPermissions).thenReturn(permissions);
             mockedStatic.when(UserContextHolder::getInstitutionId).thenReturn(123);
 
@@ -66,11 +66,11 @@ class PermissionCheckerTest {
             when(entityContext.institutionId()).thenReturn(123);
 
             // Execute and verify success when institution IDs match
-            assertDoesNotThrow(() -> permissionChecker.check(Permission.ORDER_READ));
+            assertDoesNotThrow(() -> permissionChecker.check(PermissionEnum.ORDER_READ));
 
             // Verify failure when institution IDs don't match
             when(entityContext.institutionId()).thenReturn(456);
-            assertThrows(ServiceException.class, () -> permissionChecker.check(Permission.ORDER_READ));
+            assertThrows(ServiceException.class, () -> permissionChecker.check(PermissionEnum.ORDER_READ));
         }
     }
 
@@ -80,8 +80,8 @@ class PermissionCheckerTest {
             // Setup UserContextHolder mocks
             mockedStatic.when(UserContextHolder::isAuthenticated).thenReturn(true);
 
-            Map<Permission, PermissionLevel> permissions = new HashMap<>();
-            permissions.put(Permission.ORDER_READ, PermissionLevel.INSTITUTION);
+            Map<PermissionEnum, PermissionLevel> permissions = new HashMap<>();
+            permissions.put(PermissionEnum.ORDER_READ, PermissionLevel.INSTITUTION);
             mockedStatic.when(UserContextHolder::getPermissions).thenReturn(permissions);
             mockedStatic.when(UserContextHolder::getInstitutionId).thenReturn(123);
             mockedStatic.when(UserContextHolder::getStructurePath).thenReturn("/123/456/");
@@ -91,11 +91,11 @@ class PermissionCheckerTest {
             when(entityContext.structurePath()).thenReturn("123");
 
             // Execute and verify success when path contains institution path
-            assertDoesNotThrow(() -> permissionChecker.check(Permission.ORDER_READ));
+            assertDoesNotThrow(() -> permissionChecker.check(PermissionEnum.ORDER_READ));
 
             // Verify failure when path doesn't contain institution path
             mockedStatic.when(UserContextHolder::getStructurePath).thenReturn("/999/888/");
-            assertThrows(ServiceException.class, () -> permissionChecker.check(Permission.ORDER_READ));
+            assertThrows(ServiceException.class, () -> permissionChecker.check(PermissionEnum.ORDER_READ));
         }
     }
 
@@ -105,8 +105,8 @@ class PermissionCheckerTest {
             // Setup UserContextHolder mocks
             mockedStatic.when(UserContextHolder::isAuthenticated).thenReturn(true);
 
-            Map<Permission, PermissionLevel> permissions = new HashMap<>();
-            permissions.put(Permission.ORDER_READ, PermissionLevel.DIRECTORATE);
+            Map<PermissionEnum, PermissionLevel> permissions = new HashMap<>();
+            permissions.put(PermissionEnum.ORDER_READ, PermissionLevel.DIRECTORATE);
             mockedStatic.when(UserContextHolder::getPermissions).thenReturn(permissions);
             mockedStatic.when(UserContextHolder::getDirectorateId).thenReturn(456L);
 
@@ -115,11 +115,11 @@ class PermissionCheckerTest {
             when(entityContext.directorateId()).thenReturn(456L);
 
             // Execute and verify success when directorate IDs match
-            assertDoesNotThrow(() -> permissionChecker.check(Permission.ORDER_READ));
+            assertDoesNotThrow(() -> permissionChecker.check(PermissionEnum.ORDER_READ));
 
             // Verify failure when directorate IDs don't match
             when(entityContext.directorateId()).thenReturn(789L);
-            assertThrows(ServiceException.class, () -> permissionChecker.check(Permission.ORDER_READ));
+            assertThrows(ServiceException.class, () -> permissionChecker.check(PermissionEnum.ORDER_READ));
         }
     }
 
@@ -129,8 +129,8 @@ class PermissionCheckerTest {
             // Setup UserContextHolder mocks
             mockedStatic.when(UserContextHolder::isAuthenticated).thenReturn(true);
 
-            Map<Permission, PermissionLevel> permissions = new HashMap<>();
-            permissions.put(Permission.ORDER_READ, PermissionLevel.DIRECTORATE);
+            Map<PermissionEnum, PermissionLevel> permissions = new HashMap<>();
+            permissions.put(PermissionEnum.ORDER_READ, PermissionLevel.DIRECTORATE);
             mockedStatic.when(UserContextHolder::getPermissions).thenReturn(permissions);
             mockedStatic.when(UserContextHolder::getInstitutionId).thenReturn(123);
             mockedStatic.when(UserContextHolder::getDirectorateId).thenReturn(456L);
@@ -141,11 +141,11 @@ class PermissionCheckerTest {
             when(entityContext.structurePath()).thenReturn("123/456");
 
             // Execute and verify success when path contains directorate path
-            assertDoesNotThrow(() -> permissionChecker.check(Permission.ORDER_READ));
+            assertDoesNotThrow(() -> permissionChecker.check(PermissionEnum.ORDER_READ));
 
             // Verify failure when path doesn't contain directorate path
             mockedStatic.when(UserContextHolder::getStructurePath).thenReturn("/123/999/");
-            assertThrows(ServiceException.class, () -> permissionChecker.check(Permission.ORDER_READ));
+            assertThrows(ServiceException.class, () -> permissionChecker.check(PermissionEnum.ORDER_READ));
         }
     }
 
@@ -155,8 +155,8 @@ class PermissionCheckerTest {
             // Setup UserContextHolder mocks
             mockedStatic.when(UserContextHolder::isAuthenticated).thenReturn(true);
 
-            Map<Permission, PermissionLevel> permissions = new HashMap<>();
-            permissions.put(Permission.ORDER_READ, PermissionLevel.STRUCTURE);
+            Map<PermissionEnum, PermissionLevel> permissions = new HashMap<>();
+            permissions.put(PermissionEnum.ORDER_READ, PermissionLevel.STRUCTURE);
             mockedStatic.when(UserContextHolder::getPermissions).thenReturn(permissions);
             mockedStatic.when(UserContextHolder::getStructurePath).thenReturn("/1/2/3/");
 
@@ -164,11 +164,11 @@ class PermissionCheckerTest {
             when(entityContext.structurePath()).thenReturn("1/2/3");
 
             // Execute and verify success when path is contained
-            assertDoesNotThrow(() -> permissionChecker.check(Permission.ORDER_READ));
+            assertDoesNotThrow(() -> permissionChecker.check(PermissionEnum.ORDER_READ));
 
             // Verify failure when path is not contained
             when(entityContext.structurePath()).thenReturn("4/5/6");
-            assertThrows(ServiceException.class, () -> permissionChecker.check(Permission.ORDER_READ));
+            assertThrows(ServiceException.class, () -> permissionChecker.check(PermissionEnum.ORDER_READ));
         }
     }
 
@@ -178,8 +178,8 @@ class PermissionCheckerTest {
             // Setup UserContextHolder mocks
             mockedStatic.when(UserContextHolder::isAuthenticated).thenReturn(true);
 
-            Map<Permission, PermissionLevel> permissions = new HashMap<>();
-            permissions.put(Permission.ORDER_READ, PermissionLevel.PERSONAL);
+            Map<PermissionEnum, PermissionLevel> permissions = new HashMap<>();
+            permissions.put(PermissionEnum.ORDER_READ, PermissionLevel.PERSONAL);
             mockedStatic.when(UserContextHolder::getPermissions).thenReturn(permissions);
             mockedStatic.when(UserContextHolder::getUserId).thenReturn(789L);
 
@@ -187,11 +187,11 @@ class PermissionCheckerTest {
             when(entityContext.userId()).thenReturn(789L);
 
             // Execute and verify success when user IDs match
-            assertDoesNotThrow(() -> permissionChecker.check(Permission.ORDER_READ));
+            assertDoesNotThrow(() -> permissionChecker.check(PermissionEnum.ORDER_READ));
 
             // Verify failure when user IDs don't match
             when(entityContext.userId()).thenReturn(999L);
-            assertThrows(ServiceException.class, () -> permissionChecker.check(Permission.ORDER_READ));
+            assertThrows(ServiceException.class, () -> permissionChecker.check(PermissionEnum.ORDER_READ));
         }
     }
 
@@ -202,7 +202,7 @@ class PermissionCheckerTest {
             mockedStatic.when(UserContextHolder::isAuthenticated).thenReturn(false);
 
             // Execute and verify exception is thrown
-            assertThrows(ServiceException.class, () -> permissionChecker.check(Permission.ORDER_READ));
+            assertThrows(ServiceException.class, () -> permissionChecker.check(PermissionEnum.ORDER_READ));
         }
     }
 
@@ -214,7 +214,7 @@ class PermissionCheckerTest {
             mockedStatic.when(UserContextHolder::getPermissions).thenReturn(new HashMap<>());
 
             // Execute and verify exception is thrown
-            assertThrows(ServiceException.class, () -> permissionChecker.check(Permission.ORDER_READ));
+            assertThrows(ServiceException.class, () -> permissionChecker.check(PermissionEnum.ORDER_READ));
         }
     }
 
@@ -224,12 +224,12 @@ class PermissionCheckerTest {
             // Setup UserContextHolder mocks with null permission level
             mockedStatic.when(UserContextHolder::isAuthenticated).thenReturn(true);
 
-            Map<Permission, PermissionLevel> permissions = new HashMap<>();
-            permissions.put(Permission.ORDER_READ, null);
+            Map<PermissionEnum, PermissionLevel> permissions = new HashMap<>();
+            permissions.put(PermissionEnum.ORDER_READ, null);
             mockedStatic.when(UserContextHolder::getPermissions).thenReturn(permissions);
 
             // Execute and verify exception is thrown
-            assertThrows(ServiceException.class, () -> permissionChecker.check(Permission.ORDER_READ));
+            assertThrows(ServiceException.class, () -> permissionChecker.check(PermissionEnum.ORDER_READ));
         }
     }
 
@@ -258,8 +258,8 @@ class PermissionCheckerTest {
             // Setup for directorate level test with custom path format
             mockedStatic.when(UserContextHolder::isAuthenticated).thenReturn(true);
 
-            Map<Permission, PermissionLevel> permissions = new HashMap<>();
-            permissions.put(Permission.ORDER_READ, PermissionLevel.DIRECTORATE);
+            Map<PermissionEnum, PermissionLevel> permissions = new HashMap<>();
+            permissions.put(PermissionEnum.ORDER_READ, PermissionLevel.DIRECTORATE);
             mockedStatic.when(UserContextHolder::getPermissions).thenReturn(permissions);
             mockedStatic.when(UserContextHolder::getInstitutionId).thenReturn(123);
             mockedStatic.when(UserContextHolder::getDirectorateId).thenReturn(456L);
@@ -270,11 +270,11 @@ class PermissionCheckerTest {
             when(entityContext.useOnlyPath()).thenReturn(true);
 
             // Should pass with custom format path
-            assertDoesNotThrow(() -> customChecker.check(Permission.ORDER_READ));
+            assertDoesNotThrow(() -> customChecker.check(PermissionEnum.ORDER_READ));
 
             // Should fail with incorrect path
             mockedStatic.when(UserContextHolder::getStructurePath).thenReturn("/123/456/");
-            assertThrows(ServiceException.class, () -> customChecker.check(Permission.ORDER_READ));
+            assertThrows(ServiceException.class, () -> customChecker.check(PermissionEnum.ORDER_READ));
         }
     }
 

@@ -2,7 +2,7 @@ package az.ailab.lib.common.security.model.enums;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum Permission {
+public enum PermissionEnum {
 
     // User management
     USER_READ,

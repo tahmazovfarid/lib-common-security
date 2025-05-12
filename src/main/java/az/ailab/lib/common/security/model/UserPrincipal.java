@@ -1,6 +1,6 @@
 package az.ailab.lib.common.security.model;
 
-import az.ailab.lib.common.security.model.enums.Permission;
+import az.ailab.lib.common.security.model.enums.PermissionEnum;
 import az.ailab.lib.common.security.model.enums.PermissionLevel;
 import az.ailab.lib.common.security.model.enums.RoleType;
 import az.ailab.lib.common.security.model.vo.DirectorateInfo;
@@ -90,7 +90,7 @@ public record UserPrincipal(
      */
     private static UserRole resolveUserRole(final TokenPayload payload) {
         final RoleType roleType = resolveRoleType(payload.getRoleType());
-        final Map<Permission, PermissionLevel> permissionsMap = resolvePermissions(payload.getPermissions());
+        final Map<PermissionEnum, PermissionLevel> permissionsMap = resolvePermissions(payload.getPermissions());
         return new UserRole(
                 payload.getRoleId(),
                 payload.getRoleName(),
@@ -103,17 +103,17 @@ public record UserPrincipal(
      * Converts string-based permission map into enum-based map.
      *
      * @param permissions raw map of permission name → level name
-     * @return an {@link EnumMap} of {@link Permission} → {@link PermissionLevel}
+     * @return an {@link EnumMap} of {@link PermissionEnum} → {@link PermissionLevel}
      * @throws IllegalArgumentException if any permission or level string is invalid
      */
-    private static Map<Permission, PermissionLevel> resolvePermissions(final Map<String, String> permissions) {
-        final Map<Permission, PermissionLevel> permissionsMap = new EnumMap<>(Permission.class);
+    private static Map<PermissionEnum, PermissionLevel> resolvePermissions(final Map<String, String> permissions) {
+        final Map<PermissionEnum, PermissionLevel> permissionsMap = new EnumMap<>(PermissionEnum.class);
         permissions.forEach((key, value) -> {
-            final Permission permission = EnumUtil.getOptEnumConstant(Permission.class, key)
+            final PermissionEnum permissionEnum = EnumUtil.getOptEnumConstant(PermissionEnum.class, key)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid permission: " + key));
             final PermissionLevel level = EnumUtil.getOptEnumConstant(PermissionLevel.class, value)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid permission level: " + value));
-            permissionsMap.put(permission, level);
+            permissionsMap.put(permissionEnum, level);
         });
         return permissionsMap;
     }

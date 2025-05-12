@@ -5,7 +5,7 @@ import static az.ailab.lib.common.util.specification.FilterOperations.startsWith
 
 import az.ailab.lib.common.error.ServiceException;
 import az.ailab.lib.common.security.context.UserContextHolder;
-import az.ailab.lib.common.security.model.enums.Permission;
+import az.ailab.lib.common.security.model.enums.PermissionEnum;
 import az.ailab.lib.common.security.model.enums.PermissionLevel;
 import az.ailab.lib.common.util.specification.FilterOperations;
 import az.ailab.lib.common.util.specification.FilterSpecification;
@@ -91,7 +91,7 @@ import org.springframework.data.jpa.domain.Specification;
  *
  * @param <T> the entity type this specification will be applied to
  * @see FilterSpecification
- * @see Permission
+ * @see PermissionEnum
  * @see PermissionLevel
  */
 public abstract class PermissionAwareFilterSpecification<T> implements FilterSpecification<T> {
@@ -99,15 +99,15 @@ public abstract class PermissionAwareFilterSpecification<T> implements FilterSpe
     /**
      * Combines the base filter specification with permission-based filtering.
      * <p>This method first gets the base specification from {@link #toSpecification()},
-     * then creates a permission-based specification using {@link #createPermissionSpecification(Permission)},
+     * then creates a permission-based specification using {@link #createPermissionSpecification(PermissionEnum)},
      * and finally combines them with logical AND.</p>
      *
-     * @param permission the permission to check against the user's granted permissions
+     * @param permissionEnum the permission to check against the user's granted permissions
      * @return a combined specification with both filter and permission constraints
      */
-    public Specification<T> toSpecificationWithPermission(final Permission permission) {
+    public Specification<T> toSpecificationWithPermission(final PermissionEnum permissionEnum) {
         Specification<T> specification = toSpecification();
-        Specification<T> permissionSpec = createPermissionSpecification(permission);
+        Specification<T> permissionSpec = createPermissionSpecification(permissionEnum);
 
         return specification != null ? specification.and(permissionSpec) : permissionSpec;
     }
@@ -118,15 +118,15 @@ public abstract class PermissionAwareFilterSpecification<T> implements FilterSpe
      * and creates appropriate predicates based on that level. For example, with PERSONAL level,
      * it filters only entities created by the current user.</p>
      *
-     * @param permission the permission to check against the user's granted permissions
+     * @param permissionEnum the permission to check against the user's granted permissions
      * @return a specification that restricts access based on permission level
      */
-    private Specification<T> createPermissionSpecification(final Permission permission) {
+    private Specification<T> createPermissionSpecification(final PermissionEnum permissionEnum) {
         if (!UserContextHolder.isAuthenticated()) {
             throw ServiceException.forbidden();
         }
-        final Map<Permission, PermissionLevel> permissions = UserContextHolder.getPermissions();
-        final PermissionLevel level = permissions.get(permission);
+        final Map<PermissionEnum, PermissionLevel> permissions = UserContextHolder.getPermissions();
+        final PermissionLevel level = permissions.get(permissionEnum);
 
         if (level == null) {
             throw ServiceException.forbidden();

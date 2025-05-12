@@ -2,7 +2,7 @@ package az.ailab.lib.common.security.permission;
 
 import az.ailab.lib.common.error.ServiceException;
 import az.ailab.lib.common.security.context.UserContextHolder;
-import az.ailab.lib.common.security.model.enums.Permission;
+import az.ailab.lib.common.security.model.enums.PermissionEnum;
 import az.ailab.lib.common.security.model.enums.PermissionLevel;
 import az.ailab.lib.common.security.permission.vo.EntityContext;
 import java.util.Map;
@@ -41,12 +41,12 @@ public class PermissionChecker {
      * Throws a {@link ServiceException} if the user is not authenticated
      * or does not have the required permission.
      *
-     * @param permission the permission to check for
+     * @param permissionEnum the permission to check for
      * @throws ServiceException if the user is not authenticated or doesn't have the required permission
      */
-    public void check(final Permission permission) {
-        final Map<Permission, PermissionLevel> permissions = UserContextHolder.getPermissions();
-        final PermissionLevel level = permissions.get(permission);
+    public void check(final PermissionEnum permissionEnum) {
+        final Map<PermissionEnum, PermissionLevel> permissions = UserContextHolder.getPermissions();
+        final PermissionLevel level = permissions.get(permissionEnum);
 
         if (!UserContextHolder.isAuthenticated() || level == null) {
             throw ServiceException.forbidden();

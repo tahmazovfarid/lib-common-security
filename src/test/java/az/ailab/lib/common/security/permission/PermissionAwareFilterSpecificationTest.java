@@ -10,7 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import az.ailab.lib.common.security.context.UserContextHolder;
-import az.ailab.lib.common.security.model.enums.Permission;
+import az.ailab.lib.common.security.model.enums.PermissionEnum;
 import az.ailab.lib.common.security.model.enums.PermissionLevel;
 import az.ailab.lib.common.util.specification.FilterOperations;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -80,8 +80,8 @@ class PermissionAwareFilterSpecificationTest {
             // UserContextHolder mock
             mockedStatic.when(UserContextHolder::isAuthenticated).thenReturn(true);
 
-            Map<Permission, PermissionLevel> permissions = new HashMap<>();
-            permissions.put(Permission.ORDER_READ, PermissionLevel.SYSTEM);
+            Map<PermissionEnum, PermissionLevel> permissions = new HashMap<>();
+            permissions.put(PermissionEnum.ORDER_READ, PermissionLevel.SYSTEM);
             mockedStatic.when(UserContextHolder::getPermissions).thenReturn(permissions);
 
             // FilterOperations mock
@@ -90,7 +90,7 @@ class PermissionAwareFilterSpecificationTest {
                     .thenReturn(alwaysTrueSpec);
 
             // Execute
-            Specification<TestEntity> result = specification.toSpecificationWithPermission(Permission.ORDER_READ);
+            Specification<TestEntity> result = specification.toSpecificationWithPermission(PermissionEnum.ORDER_READ);
             Predicate actualPredicate = result.toPredicate(root, query, cb);
 
             // Verify
@@ -106,8 +106,8 @@ class PermissionAwareFilterSpecificationTest {
             // UserContextHolder mock
             mockedStatic.when(UserContextHolder::isAuthenticated).thenReturn(true);
 
-            Map<Permission, PermissionLevel> permissions = new HashMap<>();
-            permissions.put(Permission.ORDER_READ, PermissionLevel.INSTITUTION);
+            Map<PermissionEnum, PermissionLevel> permissions = new HashMap<>();
+            permissions.put(PermissionEnum.ORDER_READ, PermissionLevel.INSTITUTION);
             mockedStatic.when(UserContextHolder::getPermissions).thenReturn(permissions);
             mockedStatic.when(UserContextHolder::getInstitutionId).thenReturn(123);
 
@@ -120,7 +120,7 @@ class PermissionAwareFilterSpecificationTest {
                     .thenReturn(equalsSpec);
 
             // Execute
-            Specification<TestEntity> result = specification.toSpecificationWithPermission(Permission.ORDER_READ);
+            Specification<TestEntity> result = specification.toSpecificationWithPermission(PermissionEnum.ORDER_READ);
             Predicate actualPredicate = result.toPredicate(root, query, cb);
 
             // Verify
@@ -136,8 +136,8 @@ class PermissionAwareFilterSpecificationTest {
             // UserContextHolder mock
             mockedStatic.when(UserContextHolder::isAuthenticated).thenReturn(true);
 
-            Map<Permission, PermissionLevel> permissions = new HashMap<>();
-            permissions.put(Permission.ORDER_READ, PermissionLevel.INSTITUTION);
+            Map<PermissionEnum, PermissionLevel> permissions = new HashMap<>();
+            permissions.put(PermissionEnum.ORDER_READ, PermissionLevel.INSTITUTION);
             mockedStatic.when(UserContextHolder::getPermissions).thenReturn(permissions);
             mockedStatic.when(UserContextHolder::getInstitutionId).thenReturn(123);
 
@@ -148,7 +148,7 @@ class PermissionAwareFilterSpecificationTest {
                     .thenReturn(startsWithSpec);
 
             // Execute
-            Specification<TestEntity> result = specification.toSpecificationWithPermission(Permission.ORDER_READ);
+            Specification<TestEntity> result = specification.toSpecificationWithPermission(PermissionEnum.ORDER_READ);
             Predicate actualPredicate = result.toPredicate(root, query, cb);
 
             // Verify
@@ -165,8 +165,8 @@ class PermissionAwareFilterSpecificationTest {
             // UserContextHolder mock
             mockedStatic.when(UserContextHolder::isAuthenticated).thenReturn(true);
 
-            Map<Permission, PermissionLevel> permissions = new HashMap<>();
-            permissions.put(Permission.ORDER_READ, PermissionLevel.DIRECTORATE);
+            Map<PermissionEnum, PermissionLevel> permissions = new HashMap<>();
+            permissions.put(PermissionEnum.ORDER_READ, PermissionLevel.DIRECTORATE);
             mockedStatic.when(UserContextHolder::getPermissions).thenReturn(permissions);
             mockedStatic.when(UserContextHolder::getDirectorateId).thenReturn(456L);
 
@@ -179,7 +179,7 @@ class PermissionAwareFilterSpecificationTest {
                     .thenReturn(equalsSpec);
 
             // Execute
-            Specification<TestEntity> result = specification.toSpecificationWithPermission(Permission.ORDER_READ);
+            Specification<TestEntity> result = specification.toSpecificationWithPermission(PermissionEnum.ORDER_READ);
             Predicate actualPredicate = result.toPredicate(root, query, cb);
 
             // Verify
@@ -195,8 +195,8 @@ class PermissionAwareFilterSpecificationTest {
             // UserContextHolder mock
             mockedStatic.when(UserContextHolder::isAuthenticated).thenReturn(true);
 
-            Map<Permission, PermissionLevel> permissions = new HashMap<>();
-            permissions.put(Permission.ORDER_READ, PermissionLevel.DIRECTORATE);
+            Map<PermissionEnum, PermissionLevel> permissions = new HashMap<>();
+            permissions.put(PermissionEnum.ORDER_READ, PermissionLevel.DIRECTORATE);
             mockedStatic.when(UserContextHolder::getPermissions).thenReturn(permissions);
             mockedStatic.when(UserContextHolder::getInstitutionId).thenReturn(123);
             mockedStatic.when(UserContextHolder::getDirectorateId).thenReturn(456L);
@@ -209,7 +209,7 @@ class PermissionAwareFilterSpecificationTest {
                     .thenReturn(startsWithSpec);
 
             // Execute
-            Specification<TestEntity> result = specification.toSpecificationWithPermission(Permission.ORDER_READ);
+            Specification<TestEntity> result = specification.toSpecificationWithPermission(PermissionEnum.ORDER_READ);
             Predicate actualPredicate = result.toPredicate(root, query, cb);
 
             // Verify
@@ -226,8 +226,8 @@ class PermissionAwareFilterSpecificationTest {
             // UserContextHolder mock
             mockedStatic.when(UserContextHolder::isAuthenticated).thenReturn(true);
 
-            Map<Permission, PermissionLevel> permissions = new HashMap<>();
-            permissions.put(Permission.ORDER_READ, PermissionLevel.STRUCTURE);
+            Map<PermissionEnum, PermissionLevel> permissions = new HashMap<>();
+            permissions.put(PermissionEnum.ORDER_READ, PermissionLevel.STRUCTURE);
             mockedStatic.when(UserContextHolder::getPermissions).thenReturn(permissions);
             mockedStatic.when(UserContextHolder::getStructurePath).thenReturn("1/2/3");
 
@@ -237,7 +237,7 @@ class PermissionAwareFilterSpecificationTest {
                     .thenReturn(startsWithSpec);
 
             // Execute
-            Specification<TestEntity> result = specification.toSpecificationWithPermission(Permission.ORDER_READ);
+            Specification<TestEntity> result = specification.toSpecificationWithPermission(PermissionEnum.ORDER_READ);
             Predicate actualPredicate = result.toPredicate(root, query, cb);
 
             // Verify
@@ -254,8 +254,8 @@ class PermissionAwareFilterSpecificationTest {
             // UserContextHolder mock
             mockedStatic.when(UserContextHolder::isAuthenticated).thenReturn(true);
 
-            Map<Permission, PermissionLevel> permissions = new HashMap<>();
-            permissions.put(Permission.ORDER_READ, PermissionLevel.PERSONAL);
+            Map<PermissionEnum, PermissionLevel> permissions = new HashMap<>();
+            permissions.put(PermissionEnum.ORDER_READ, PermissionLevel.PERSONAL);
             mockedStatic.when(UserContextHolder::getPermissions).thenReturn(permissions);
             mockedStatic.when(UserContextHolder::getUserId).thenReturn(789L);
 
@@ -265,7 +265,7 @@ class PermissionAwareFilterSpecificationTest {
                     .thenReturn(equalsSpec);
 
             // Execute
-            Specification<TestEntity> result = specification.toSpecificationWithPermission(Permission.ORDER_READ);
+            Specification<TestEntity> result = specification.toSpecificationWithPermission(PermissionEnum.ORDER_READ);
             Predicate actualPredicate = result.toPredicate(root, query, cb);
 
             // Verify
@@ -281,8 +281,8 @@ class PermissionAwareFilterSpecificationTest {
             // UserContextHolder mock
             mockedStatic.when(UserContextHolder::isAuthenticated).thenReturn(true);
 
-            Map<Permission, PermissionLevel> permissions = new HashMap<>();
-            permissions.put(Permission.ORDER_READ, PermissionLevel.PERSONAL);
+            Map<PermissionEnum, PermissionLevel> permissions = new HashMap<>();
+            permissions.put(PermissionEnum.ORDER_READ, PermissionLevel.PERSONAL);
             mockedStatic.when(UserContextHolder::getPermissions).thenReturn(permissions);
             mockedStatic.when(UserContextHolder::getUserId).thenReturn(789L);
 
@@ -304,7 +304,7 @@ class PermissionAwareFilterSpecificationTest {
             when(cb.and(basicPredicate, userPredicate)).thenReturn(combinedPredicate);
 
             // Execute
-            Specification<TestEntity> result = specification.toSpecificationWithPermission(Permission.ORDER_READ);
+            Specification<TestEntity> result = specification.toSpecificationWithPermission(PermissionEnum.ORDER_READ);
             Predicate actualPredicate = result.toPredicate(root, query, cb);
 
             // Verify

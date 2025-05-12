@@ -2,7 +2,7 @@ package az.ailab.lib.common.security.context;
 
 import az.ailab.lib.common.security.model.UserPrincipal;
 import az.ailab.lib.common.security.model.enums.ActivityType;
-import az.ailab.lib.common.security.model.enums.Permission;
+import az.ailab.lib.common.security.model.enums.PermissionEnum;
 import az.ailab.lib.common.security.model.enums.PermissionLevel;
 import az.ailab.lib.common.security.model.enums.RankType;
 import az.ailab.lib.common.security.model.enums.RoleType;
@@ -197,9 +197,9 @@ public final class UserContextHolder {
     /**
      * Retrieves the permission map assigned to the currently authenticated user's role.
      *
-     * @return a {@link Map} of {@link Permission} to {@link PermissionLevel}, or an empty map if the user is not authenticated.
+     * @return a {@link Map} of {@link PermissionEnum} to {@link PermissionLevel}, or an empty map if the user is not authenticated.
      */
-    public static Map<Permission, PermissionLevel> getPermissions() {
+    public static Map<PermissionEnum, PermissionLevel> getPermissions() {
         return Optional.ofNullable(getRole())
                 .map(UserRole::permissions)
                 .orElse(Collections.emptyMap());

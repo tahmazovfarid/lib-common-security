@@ -10,7 +10,7 @@ import az.ailab.lib.common.security.constants.SecurityConstant;
 import az.ailab.lib.common.security.contant.TestConstant;
 import az.ailab.lib.common.security.model.TokenPayload;
 import az.ailab.lib.common.security.model.UserPrincipal;
-import az.ailab.lib.common.security.model.enums.Permission;
+import az.ailab.lib.common.security.model.enums.PermissionEnum;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +61,7 @@ public class UserTokenProviderTest {
 
         assertThat(authorities)
                 .extracting(GrantedAuthority::getAuthority)
-                .contains(Permission.ORDER_READ.name(), Permission.USER_READ.name());
+                .contains(PermissionEnum.ORDER_READ.name(), PermissionEnum.USER_READ.name());
 
         verify(tokenPayload, times(2)).getRoleName();
         verify(tokenPayload, times(2)).getPermissions();
