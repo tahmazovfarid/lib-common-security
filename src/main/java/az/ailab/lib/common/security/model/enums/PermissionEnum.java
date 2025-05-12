@@ -40,16 +40,10 @@ public enum PermissionEnum {
     // Personal information management
     PERSONAL_EDIT,
 
-    // Request submission management
-    REQUEST_READ,
-    REQUEST_CREATE,
-    REQUEST_EDIT,
-
     // Inquiry receiving management
     INQUIRY_RECEIVING_READ,
     INQUIRY_RECEIVING_CREATE,
-    INQUIRY_RECEIVING_ASSIGN,
-    INQUIRY_RECEIVING_APPROVE,
+    INQUIRY_RECEIVING_EDIT,
 
     // Order management
     ORDER_READ,
@@ -59,8 +53,7 @@ public enum PermissionEnum {
     // Flow management
     FLOW_READ,
     FLOW_CREATE,
-    FLOW_EDIT,
-    INQUIRY_APPROVE;
+    FLOW_EDIT;
 
     @JsonValue
     public String toValue() {
