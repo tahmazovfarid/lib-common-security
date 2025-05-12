@@ -1,11 +1,7 @@
 package az.ailab.lib.common.security.util;
 
-import az.ailab.lib.common.error.ServiceException;
 import az.ailab.lib.common.security.constants.SecurityConstant;
 import az.ailab.lib.common.util.HeaderUtil;
-import jakarta.validation.constraints.NotNull;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.Optional;
 import org.springframework.http.HttpHeaders;
 

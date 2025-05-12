@@ -23,7 +23,9 @@ import java.util.Date;
  */
 public final class JwtUtil {
 
-    private JwtUtil() { /* utility class */ }
+    private JwtUtil() {
+        /* utility class */
+    }
 
     /**
      * Parses and verifies the given JWT, returning the full {@link Jws} wrapper,
@@ -54,9 +56,8 @@ public final class JwtUtil {
         return parseAndValidate(token, secretKey).getBody();
     }
 
-
     /**
-     * Parses and verifies a JWT, returning its JwsHeader (which implements Map<String, Object>).
+     * Parses and verifies a JWT, returning its JwsHeader.
      *
      * @param token     the JWT string
      * @param secretKey the Base64‑encoded HMAC secret key

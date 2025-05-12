@@ -69,4 +69,5 @@ public @interface ClientAuth {
      * @return true to forward the Authorization header, false otherwise
      */
     boolean forwardAuthorizationHeader() default false;
+
 }
