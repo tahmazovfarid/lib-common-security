@@ -53,7 +53,8 @@ public enum PermissionEnum {
     // Flow management
     FLOW_READ,
     FLOW_CREATE,
-    FLOW_EDIT;
+    FLOW_EDIT,
+    FLOW_DELETE;
 
     @JsonValue
     public String toValue() {
