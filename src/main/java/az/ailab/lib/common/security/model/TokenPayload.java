@@ -101,7 +101,11 @@ public class TokenPayload {
         payload.email = userNode.path(TokenField.EMAIL).asText();
         payload.rank = userNode.path(TokenField.RANK).asText();
         payload.position = userNode.path(TokenField.POSITION).asText();
-        payload.structureId = userNode.path(TokenField.DIRECT_STRUCTURE_ID).asLong();
+
+        JsonNode structureNode = userNode.path(TokenField.DIRECT_STRUCTURE_ID);
+        if (structureNode != null && !structureNode.isNull() && !structureNode.isMissingNode()) {
+            payload.structureId = structureNode.asLong();
+        }
 
         extractRoleInfo(userNode.path(TokenField.ROLE), payload);
     }
