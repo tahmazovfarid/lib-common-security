@@ -56,13 +56,73 @@ public final class JwtUtil {
                 .parseClaimsJws(token);
     }
 
-    public static String extractSubject(Jws<Claims> jwsClaims) {
-        return jwsClaims.getBody().getSubject();
+    /**
+     * Extracts only the {@link Claims} (the JWT body) after validating signature.
+     *
+     * @param token     the compact JWT string
+     * @param secretKey the Base64‑encoded HMAC secret key
+     * @return the JWT claims
+     * @throws JwtException if token is invalid or signature check fails
+     */
+    public static Claims getPayload(final String token, final String secretKey) {
+        return parseAndValidate(token, secretKey).getBody();
     }
 
-    private List<GrantedAuthority> extractAuthorities(final Jws<Claims> claimsJws, final ObjectMapper objectMapper) {
+    /**
+     * Parses and verifies a JWT, returning its JwsHeader.
+     *
+     * @param claimsJws the claims from jws
+     * @return the JWT header (alg, typ, etc.)
+     * @throws JwtException if token is invalid
+     */
+    public static JwsHeader<?> getHeader(Jws<Claims> claimsJws) {
+        return claimsJws.getHeader();
+    }
+
+    /**
+     * Extracts the subject (typically the username or user identifier) from the given JWT claims.
+     *
+     * @param payload the JWT claims object containing the token payload
+     * @return the subject (e.g., user identifier) embedded in the token
+     * @throws NullPointerException if the subject field is missing in the claims
+     */
+    public static String extractSubject(Claims payload) {
+        return payload.getSubject();
+    }
+
+    /**
+     * Extracts granted authorities (roles and permissions) from the given JWT claims.
+     * <p>
+     * It reads the user role and permission structure from the claims,
+     * and converts them into a list of {@link GrantedAuthority} instances, including:
+     * <ul>
+     *     <li>A single role (prefixed with {@code ROLE_})</li>
+     *     <li>Multiple permission keys (as-is, no prefix)</li>
+     * </ul>
+     *
+     * Example JSON structure expected in claims:
+     * <pre>
+     * {
+     *   "user": {
+     *     "role": {
+     *       "type": "ADMIN",
+     *       "permissions": {
+     *         "USER_READ": "INSTITUTION",
+     *         "USER_EDIT": "INSTITUTION"
+     *       }
+     *     }
+     *   }
+     * }
+     * </pre>
+     *
+     * @param payload the JWT claims payload to extract data from
+     * @param objectMapper Jackson ObjectMapper used to convert claims to a tree structure
+     * @return a list of {@link GrantedAuthority} including the user's role and permission keys
+     * @throws IllegalStateException if extraction fails due to malformed claims
+     */
+    public List<GrantedAuthority> extractAuthorities(final Claims payload, final ObjectMapper objectMapper) {
         try {
-            JsonNode root = objectMapper.valueToTree(claimsJws.getBody());
+            JsonNode root = objectMapper.valueToTree(payload);
             JsonNode roleNode = root.path(TokenField.USER).path(TokenField.ROLE);
 
             String roleType = roleNode.path(TokenField.TYPE).asText();
@@ -85,52 +145,26 @@ public final class JwtUtil {
     }
 
     /**
-     * Extracts only the {@link Claims} (the JWT body) after validating signature.
-     *
-     * @param token     the compact JWT string
-     * @param secretKey the Base64‑encoded HMAC secret key
-     * @return the JWT claims
-     * @throws JwtException if token is invalid or signature check fails
-     */
-    public static Claims getClaims(final String token, final String secretKey) {
-        return parseAndValidate(token, secretKey).getBody();
-    }
-
-    /**
-     * Parses and verifies a JWT, returning its JwsHeader.
-     *
-     * @param token     the JWT string
-     * @param secretKey the Base64‑encoded HMAC secret key
-     * @return the JWT header (alg, typ, etc.)
-     * @throws JwtException if token is invalid
-     */
-    public static JwsHeader<?> getHeader(final String token, final String secretKey) {
-        return parseAndValidate(token, secretKey).getHeader();
-    }
-
-    /**
      * Returns the token's expiration instant, or null if no exp claim is set.
      *
-     * @param token     the JWT string
-     * @param secretKey the Base64‑encoded HMAC secret key
+     * @param payload – the JWT payload
      * @return the {@link Instant} of expiration, or null if none
      * @throws JwtException if token is invalid
      */
-    public static Instant getExpiration(final String token, final String secretKey) {
-        final Date exp = getClaims(token, secretKey).getExpiration();
+    public static Instant extractExpiration(Claims payload) {
+        final Date exp = payload.getExpiration();
         return (exp != null ? exp.toInstant() : null);
     }
 
     /**
      * Convenience method to check if the token is expired at the current time.
      *
-     * @param token     the JWT string
-     * @param secretKey the Base64‑encoded HMAC secret key
+     * @param payload     the JWT payload
      * @return true if now is after the token's exp claim, false otherwise
      * @throws JwtException if token is invalid
      */
-    public static boolean isExpired(final String token, final String secretKey) {
-        final Instant exp = getExpiration(token, secretKey);
+    public static boolean isExpired(Claims payload) {
+        final Instant exp = extractExpiration(payload);
         return (exp != null && Instant.now().isAfter(exp));
     }
 
