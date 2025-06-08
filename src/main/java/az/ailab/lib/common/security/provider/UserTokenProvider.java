@@ -45,7 +45,7 @@ public class UserTokenProvider extends AbstractTokenProvider {
     @Override
     public Authentication buildAuthentication(final TokenPayload tokenPayload) {
         final List<GrantedAuthority> authorities = mapGrantedAuthorities(
-                tokenPayload.getRoleName(),
+                tokenPayload.getRoleType(),
                 tokenPayload.getPermissions()
         );
         final UserPrincipal userPrincipal = UserPrincipal.of(tokenPayload, authorities);

@@ -1,6 +1,9 @@
 package az.ailab.lib.common.security.util;
 
 import az.ailab.lib.common.security.constants.SecurityConstant;
+import az.ailab.lib.common.security.constants.TokenField;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jws;
@@ -12,6 +15,14 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 /**
  * Utility methods for parsing, validating, and extracting data from JWTs
@@ -38,10 +49,39 @@ public final class JwtUtil {
      */
     public static Jws<Claims> parseAndValidate(final String token, final String secretKey) {
         final byte[] keyBytes = Base64.getDecoder().decode(secretKey);
+
         return Jwts.parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor(keyBytes))
                 .build()
                 .parseClaimsJws(token);
+    }
+
+    public static String extractSubject(Jws<Claims> jwsClaims) {
+        return jwsClaims.getBody().getSubject();
+    }
+
+    private List<GrantedAuthority> extractAuthorities(final Jws<Claims> claimsJws, final ObjectMapper objectMapper) {
+        try {
+            JsonNode root = objectMapper.valueToTree(claimsJws.getBody());
+            JsonNode roleNode = root.path(TokenField.USER).path(TokenField.ROLE);
+
+            String roleType = roleNode.path(TokenField.TYPE).asText();
+            JsonNode permissionsNode = roleNode.path(TokenField.PERMISSIONS);
+
+            Stream<GrantedAuthority> roleStream = Stream.of(
+                    new SimpleGrantedAuthority(SecurityConstant.ROLE_PREFIX + roleType)
+            );
+
+            Stream<GrantedAuthority> permissionStream = StreamSupport
+                    .stream(Spliterators.spliteratorUnknownSize(
+                            permissionsNode.fieldNames(), Spliterator.ORDERED), false)
+                    .map(SimpleGrantedAuthority::new);
+
+            return Stream.concat(roleStream, permissionStream)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to extract permissions from JWT", e);
+        }
     }
 
     /**

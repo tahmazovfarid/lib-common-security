@@ -75,16 +75,16 @@ public abstract class AbstractTokenProvider {
      * Prepends a standard prefix to the role name, then adds each permission key as its
      * own {@link SimpleGrantedAuthority}.</p>
      *
-     * @param role the primary role name (without prefix)
+     * @param roleType the primary role type (without prefix)
      * @param permissions a map of permission identifiers to values (values are ignored here)
      * @return a list of {@link GrantedAuthority} including the role and each permission
      */
     public List<GrantedAuthority> mapGrantedAuthorities(
-            final String role,
+            final String roleType,
             final Map<String, String> permissions) {
         final List<GrantedAuthority> authorities = new ArrayList<>();
         // Add the role with configured prefix
-        authorities.add(new SimpleGrantedAuthority(SecurityConstant.ROLE_PREFIX + role));
+        authorities.add(new SimpleGrantedAuthority(SecurityConstant.ROLE_PREFIX + roleType));
         // Add each permission as a separate authority
         permissions.keySet().stream()
                 .map(SimpleGrantedAuthority::new)
