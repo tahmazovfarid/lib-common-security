@@ -3,6 +3,7 @@ package az.ailab.lib.common.security.model;
 import az.ailab.lib.common.security.model.enums.PermissionEnum;
 import az.ailab.lib.common.security.model.enums.PermissionLevel;
 import az.ailab.lib.common.security.model.enums.RoleType;
+import az.ailab.lib.common.security.model.enums.UserType;
 import az.ailab.lib.common.security.model.vo.DirectorateInfo;
 import az.ailab.lib.common.security.model.vo.InstitutionInfo;
 import az.ailab.lib.common.security.model.vo.UserRole;
@@ -44,6 +45,7 @@ public record UserPrincipal(
         String lastName,
         String email,
         String pin,
+        UserType userType,
         String rank,
         String position,
         Long directStructureId,
@@ -72,6 +74,7 @@ public record UserPrincipal(
                 payload.getLastName(),
                 payload.getEmail(),
                 payload.getSubject(),
+                resolveUserType(payload.getUserType()),
                 payload.getRank(),
                 payload.getPosition(),
                 payload.getStructureId(),
@@ -128,6 +131,18 @@ public record UserPrincipal(
     private static RoleType resolveRoleType(final String roleType) {
         return EnumUtil.getOptEnumConstant(RoleType.class, roleType)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid role type: " + roleType));
+    }
+
+    /**
+     * Converts the raw userType string into a {@link UserType} enum.
+     *
+     * @param userType the raw user type value
+     * @return the corresponding {@link UserType} enum
+     * @throws IllegalArgumentException if the user type is invalid
+     */
+    private static UserType resolveUserType(String userType) {
+        return EnumUtil.getOptEnumConstant(UserType.class, userType)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid role type: " + userType));
     }
 
     /**

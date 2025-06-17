@@ -12,7 +12,9 @@ import lombok.Data;
  * This value object provides typed access to standard JWT claims (subject, issuedAt, exp)
  * as well as nested user, role, institution, and directorate details as defined in the
  * token's JSON structure. Use {@link #fromJsonNode(JsonNode)} to parse a payload tree into
- * an instance of this class.</p>
+ * an instance of this class. </p>
+ * <p>
+ * Required fields are validated during parsing. Optional fields may be null.
  *
  * @author tahmazovfarid
  * @since 1.0
@@ -29,6 +31,7 @@ public class TokenPayload {
     private Long userId;
     private String firstName;
     private String lastName;
+    private String userType;
     private String email;
     private String rank;
     private String position;
@@ -83,9 +86,9 @@ public class TokenPayload {
      * @param payload  the target payload object to populate
      */
     private static void extractBasicFields(final JsonNode jsonNode, final TokenPayload payload) {
-        payload.subject = jsonNode.path(TokenField.SUB).asText();
-        payload.issuedAt = jsonNode.path(TokenField.IAT).asLong();
-        payload.expirationTime = jsonNode.path(TokenField.EXP).asLong();
+        payload.subject = requireNonNull(jsonNode, TokenField.SUB);
+        payload.issuedAt = requireNonNullLong(jsonNode, TokenField.IAT);
+        payload.expirationTime = requireNonNullLong(jsonNode, TokenField.EXP);
     }
 
     /**
@@ -95,17 +98,15 @@ public class TokenPayload {
      * @param payload  the target payload object to populate
      */
     private static void extractUserAndRoleInfo(final JsonNode userNode, final TokenPayload payload) {
-        payload.userId = userNode.path(TokenField.ID).asLong();
-        payload.firstName = userNode.path(TokenField.FIRST_NAME).asText();
-        payload.lastName = userNode.path(TokenField.LAST_NAME).asText();
-        payload.email = userNode.path(TokenField.EMAIL).asText();
-        payload.rank = userNode.path(TokenField.RANK).asText();
-        payload.position = userNode.path(TokenField.POSITION).asText();
+        payload.userId = requireNonNullLong(userNode, TokenField.ID);
+        payload.firstName = requireNonNull(userNode, TokenField.FIRST_NAME);
+        payload.lastName = requireNonNull(userNode, TokenField.LAST_NAME);
+        payload.email = requireNonNull(userNode, TokenField.EMAIL);
+        payload.userType = requireNonNull(userNode, TokenField.TYPE);
+        payload.rank = getNullable(userNode, TokenField.RANK);
+        payload.position = getNullable(userNode, TokenField.POSITION);
 
-        JsonNode structureNode = userNode.path(TokenField.DIRECT_STRUCTURE_ID);
-        if (structureNode != null && !structureNode.isNull() && !structureNode.isMissingNode()) {
-            payload.structureId = structureNode.asLong();
-        }
+        payload.structureId = getNullableLong(userNode, TokenField.DIRECT_STRUCTURE_ID);
 
         extractRoleInfo(userNode.path(TokenField.ROLE), payload);
     }
@@ -117,9 +118,9 @@ public class TokenPayload {
      * @param payload  the target payload object to populate
      */
     private static void extractRoleInfo(final JsonNode roleNode, final TokenPayload payload) {
-        payload.roleId = roleNode.path(TokenField.ID).asLong();
-        payload.roleName = roleNode.path(TokenField.NAME).asText();
-        payload.roleType = roleNode.path(TokenField.TYPE).asText();
+        payload.roleId = requireNonNullLong(roleNode, TokenField.ID);
+        payload.roleName = requireNonNull(roleNode, TokenField.NAME);
+        payload.roleType = requireNonNull(roleNode, TokenField.TYPE);
         payload.permissions = extractArrayAsMap(roleNode.path(TokenField.PERMISSIONS));
     }
 
@@ -130,11 +131,12 @@ public class TokenPayload {
      * @param payload  the target payload object to populate
      */
     private static void extractInstitutionInfo(final JsonNode instNode, final TokenPayload payload) {
-        payload.institutionId = instNode.path(TokenField.ID).asInt();
-        payload.institutionName = instNode.path(TokenField.NAME).asText();
-        payload.institutionActivityType = instNode.path(TokenField.ACTIVITY_TYPE).asText();
-        payload.institutionRankType = instNode.path(TokenField.RANK_TYPE).asText();
-        payload.structurePath = instNode.path(TokenField.PATH).asText();
+        payload.institutionId = getNullableInt(instNode, TokenField.ID);
+        payload.institutionName = getNullable(instNode, TokenField.NAME);
+        payload.institutionActivityType = getNullable(instNode, TokenField.ACTIVITY_TYPE);
+        payload.institutionRankType = getNullable(instNode, TokenField.RANK_TYPE);
+        payload.structurePath = getNullable(instNode, TokenField.PATH);
+
         extractDirectorate(instNode.path(TokenField.DIRECTORATE), payload);
     }
 
@@ -145,11 +147,9 @@ public class TokenPayload {
      * @param payload         the target payload object to populate
      */
     private static void extractDirectorate(final JsonNode directorateNode, final TokenPayload payload) {
-        if (directorateNode != null && !directorateNode.isNull() && !directorateNode.isMissingNode()) {
-            payload.directorateId = directorateNode.path(TokenField.ID).asLong();
-            payload.directorateName = directorateNode.path(TokenField.NAME).asText();
-            payload.directorateActivityType = directorateNode.path(TokenField.ACTIVITY_TYPE).asText();
-        }
+        payload.directorateId = getNullableLong(directorateNode, TokenField.ID);
+        payload.directorateName = getNullable(directorateNode, TokenField.NAME);
+        payload.directorateActivityType = getNullable(directorateNode, TokenField.ACTIVITY_TYPE);
     }
 
     /**
@@ -160,10 +160,41 @@ public class TokenPayload {
      */
     private static Map<String, String> extractArrayAsMap(final JsonNode jsonNode) {
         final Map<String, String> map = new HashMap<>();
-        jsonNode.fields().forEachRemaining(
-                entry -> map.put(entry.getKey(), entry.getValue().asText())
-        );
+        jsonNode.fields()
+                .forEachRemaining(entry -> map.put(entry.getKey(), entry.getValue().asText()));
         return map;
+    }
+
+    // --- Helper methods for safe extraction ---
+    private static String requireNonNull(JsonNode node, String field) {
+        JsonNode valueNode = node.path(field);
+        if (valueNode.isMissingNode() || valueNode.isNull() || valueNode.asText().isBlank()) {
+            throw new IllegalArgumentException("Missing or null required field: " + field);
+        }
+        return valueNode.asText();
+    }
+
+    private static Long requireNonNullLong(JsonNode node, String field) {
+        JsonNode valueNode = node.path(field);
+        if (valueNode.isMissingNode() || valueNode.isNull()) {
+            throw new IllegalArgumentException("Missing or null required long field: " + field);
+        }
+        return valueNode.asLong();
+    }
+
+    private static String getNullable(JsonNode node, String field) {
+        JsonNode valueNode = node.path(field);
+        return (valueNode.isMissingNode() || valueNode.isNull()) ? null : valueNode.asText();
+    }
+
+    private static Long getNullableLong(JsonNode node, String field) {
+        JsonNode valueNode = node.path(field);
+        return (valueNode.isMissingNode() || valueNode.isNull()) ? null : valueNode.asLong();
+    }
+
+    private static Integer getNullableInt(JsonNode node, String field) {
+        JsonNode valueNode = node.path(field);
+        return (valueNode.isMissingNode() || valueNode.isNull()) ? null : valueNode.asInt();
     }
 
 }

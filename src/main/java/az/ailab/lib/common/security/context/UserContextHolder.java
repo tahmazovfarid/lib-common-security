@@ -6,6 +6,7 @@ import az.ailab.lib.common.security.model.enums.PermissionEnum;
 import az.ailab.lib.common.security.model.enums.PermissionLevel;
 import az.ailab.lib.common.security.model.enums.RankType;
 import az.ailab.lib.common.security.model.enums.RoleType;
+import az.ailab.lib.common.security.model.enums.UserType;
 import az.ailab.lib.common.security.model.vo.DirectorateInfo;
 import az.ailab.lib.common.security.model.vo.InstitutionInfo;
 import az.ailab.lib.common.security.model.vo.UserRole;
@@ -82,6 +83,10 @@ public final class UserContextHolder {
      */
     public static String getEmail() {
         return getCurrentUser().map(UserPrincipal::email).orElse(null);
+    }
+
+    public static UserType getUserType() {
+        return getCurrentUser().map(UserPrincipal::userType).orElse(null);
     }
 
     /**

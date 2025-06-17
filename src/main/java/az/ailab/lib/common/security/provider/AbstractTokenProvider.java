@@ -80,11 +80,14 @@ public abstract class AbstractTokenProvider {
      * @return a list of {@link GrantedAuthority} including the role and each permission
      */
     public List<GrantedAuthority> mapGrantedAuthorities(
+            final String userType,
             final String roleType,
             final Map<String, String> permissions) {
-        final List<GrantedAuthority> authorities = new ArrayList<>();
+        final List<GrantedAuthority> authorities = new ArrayList<>(permissions.size() + 2);
         // Add the role with configured prefix
         authorities.add(new SimpleGrantedAuthority(SecurityConstant.ROLE_PREFIX + roleType));
+        authorities.add(new SimpleGrantedAuthority(SecurityConstant.ROLE_PREFIX + userType));
+
         // Add each permission as a separate authority
         permissions.keySet().stream()
                 .map(SimpleGrantedAuthority::new)
