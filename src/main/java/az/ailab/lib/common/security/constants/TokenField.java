@@ -25,7 +25,7 @@ public final class TokenField {
     public static final String EMAIL = "email";
     public static final String RANK = "rank";
     public static final String POSITION = "position";
-    public static final String DIRECT_STRUCTURE_ID = "directStructureId";
+    public static final String STRUCTURE_ID = "structureId";
 
     // Role node and fields
     public static final String ROLE = "role";

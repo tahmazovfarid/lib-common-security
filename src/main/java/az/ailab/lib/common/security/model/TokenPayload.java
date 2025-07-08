@@ -106,7 +106,7 @@ public class TokenPayload {
         payload.rank = getNullable(userNode, TokenField.RANK);
         payload.position = getNullable(userNode, TokenField.POSITION);
 
-        payload.structureId = getNullableLong(userNode, TokenField.DIRECT_STRUCTURE_ID);
+        payload.structureId = getNullableLong(userNode, TokenField.STRUCTURE_ID);
 
         extractRoleInfo(userNode.path(TokenField.ROLE), payload);
     }
