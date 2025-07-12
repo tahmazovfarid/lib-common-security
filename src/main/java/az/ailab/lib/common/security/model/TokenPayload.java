@@ -98,10 +98,10 @@ public class TokenPayload {
      * @param payload  the target payload object to populate
      */
     private static void extractUserAndRoleInfo(final JsonNode userNode, final TokenPayload payload) {
-        payload.userId = requireNonNullLong(userNode, TokenField.ID);
-        payload.firstName = requireNonNull(userNode, TokenField.FIRST_NAME);
-        payload.lastName = requireNonNull(userNode, TokenField.LAST_NAME);
-        payload.email = requireNonNull(userNode, TokenField.EMAIL);
+        payload.userId = getNullableLong(userNode, TokenField.ID);
+        payload.firstName = getNullable(userNode, TokenField.FIRST_NAME);
+        payload.lastName = getNullable(userNode, TokenField.LAST_NAME);
+        payload.email = getNullable(userNode, TokenField.EMAIL);
         payload.userType = requireNonNull(userNode, TokenField.TYPE);
         payload.rank = getNullable(userNode, TokenField.RANK);
         payload.position = getNullable(userNode, TokenField.POSITION);
